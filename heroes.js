@@ -169,191 +169,191 @@ const HEROES = [
 // Формат: enemyId: [{id, reason}]
 const CURATED_COUNTERS = {
   "anti-mage": [
-    {id:"axe", reason:"Berserker's Call заставляет AM драться в ближнем бою, где он слаб"},
-    {id:"legion-commander", reason:"Duel и петля крови убивают AM до того, как он разгонится"},
-    {id:"night-stalker", reason:"Ночью резко ловит AM без побега"},
-    {id:"bloodseeker", reason:"Rupture не даёт заблинковать и убежать"}
+    {id:"axe", reason:"Клич берсерка заставляет Анти-мага драться в ближнем бою, где он слаб"},
+    {id:"legion-commander", reason:"Дуэль и Петля крови убивают Анти-мага до того, как он разгонится"},
+    {id:"night-stalker", reason:"Ночью резко ловит Анти-мага без побега"},
+    {id:"bloodseeker", reason:"Разрыв не даёт заблинковать и убежать"}
   ],
   "phantom-assassin": [
-    {id:"nyx-assassin", reason:"Мана Берн и Impale ловят PA сквозь Blur"},
+    {id:"nyx-assassin", reason:"Сжигание маны и Пронзание ловят Фантом Ассассина сквозь Смаз"},
     {id:"bristleback", reason:"Много брони и урон, который не зависит от критов"},
-    {id:"lion", reason:"Долгий стан+силенс убивают PA до крита"},
-    {id:"axe", reason:"Call гарантированно ловит и заставляет драться"}
+    {id:"lion", reason:"Долгий стан+силенс убивают Фантом Ассассина до крита"},
+    {id:"axe", reason:"Клич гарантированно ловит и заставляет драться"}
   ],
   "juggernaut": [
-    {id:"axe", reason:"Berserker's Call ловит даже в Blade Fury (не прерывает, но фиксирует после)"},
-    {id:"lion", reason:"Стан+силенс до Omnislash или сразу после"},
-    {id:"bane", reason:"Fiend's Grip убивает сквозь Blade Fury"},
-    {id:"disruptor", reason:"Glimpse отменяет позиционирование к Omnislash"}
+    {id:"axe", reason:"Клич берсерка ловит даже в Клинковый вихрь (не прерывает, но фиксирует после)"},
+    {id:"lion", reason:"Стан+силенс до Всесечение или сразу после"},
+    {id:"bane", reason:"Хватка исчадия убивает сквозь Клинковый вихрь"},
+    {id:"disruptor", reason:"Проблеск отменяет позиционирование к Всесечение"}
   ],
   "riki": [
-    {id:"bounty-hunter", reason:"Track и обзор снимают невидимость"},
-    {id:"slardar", reason:"Amplify Damage раскрывает Рики"},
-    {id:"nyx-assassin", reason:"Impale ловит из вижена, силенс не даёт активок"}
+    {id:"bounty-hunter", reason:"Слежка и обзор снимают невидимость"},
+    {id:"slardar", reason:"Усиление урона раскрывает Рики"},
+    {id:"nyx-assassin", reason:"Пронзание ловит из вижена, силенс не даёт активок"}
   ],
   "slark": [
-    {id:"nyx-assassin", reason:"Impale и Mana Burn ловят и обнуляют ману"},
-    {id:"bloodseeker", reason:"Rupture ловит побег после Pounce"},
-    {id:"legion-commander", reason:"Duel не даёт Сларку выйти из боя"},
-    {id:"axe", reason:"Call фиксирует в бою"}
+    {id:"nyx-assassin", reason:"Пронзание и Сжигание маны ловят и обнуляют ману"},
+    {id:"bloodseeker", reason:"Разрыв ловит побег после Прыжка"},
+    {id:"legion-commander", reason:"Дуэль не даёт Сларку выйти из боя"},
+    {id:"axe", reason:"Клич фиксирует в бою"}
   ],
   "storm-spirit": [
-    {id:"axe", reason:"Долетает Call при выходе из Ball Lightning"},
-    {id:"bloodseeker", reason:"Thirst и Rupture ловят на переходах"},
-    {id:"silencer", reason:"Global Silence обнуляет мобильность Шторма"},
-    {id:"nyx-assassin", reason:"Mana Burn лишает маны на способности"}
+    {id:"axe", reason:"Клич достаёт при выходе из Шаровая молния"},
+    {id:"bloodseeker", reason:"Жажда крови и Разрыв ловят на переходах"},
+    {id:"silencer", reason:"Глобальное безмолвие обнуляет мобильность Шторма"},
+    {id:"nyx-assassin", reason:"Сжигание маны лишает маны на способности"}
   ],
   "templar-assassin": [
-    {id:"bounty-hunter", reason:"Обзор и Track снимают Meld/невидимость"},
-    {id:"earthshaker", reason:"АОЕ стан ловит несмотря на Refraction"},
-    {id:"axe", reason:"Call снимает заряды Refraction моментально"}
+    {id:"bounty-hunter", reason:"Обзор и Слежка снимают Слияние/невидимость"},
+    {id:"earthshaker", reason:"АОЕ стан ловит несмотря на Рефракция"},
+    {id:"axe", reason:"Клич снимает заряды Рефракция моментально"}
   ],
   "medusa": [
-    {id:"silencer", reason:"Global Silence не даёт использовать Split Shot/Stone Gaze"},
-    {id:"doom", reason:"Doom режет пассивки и не даёт кастовать"},
-    {id:"bloodseeker", reason:"Rupture обходит Mana Shield по механике позиционирования"}
+    {id:"silencer", reason:"Глобальное безмолвие не даёт использовать Веерный выстрел/Каменный взгляд"},
+    {id:"doom", reason:"Дум режет пассивки и не даёт кастовать"},
+    {id:"bloodseeker", reason:"Разрыв обходит Щит маны по механике позиционирования"}
   ],
   "spectre": [
-    {id:"axe", reason:"Прерывает фарм иллюзий давлением, Call фиксирует"},
+    {id:"axe", reason:"Прерывает фарм иллюзий давлением, Клич фиксирует"},
     {id:"phantom-lancer", reason:"У Спектр слаб пуш на линии от иллюзий ПЛ"},
-    {id:"bloodseeker", reason:"Rupture убивает даже сквозь Dispersion"}
+    {id:"bloodseeker", reason:"Разрыв убивает даже сквозь Рассеивание"}
   ],
   "faceless-void": [
-    {id:"silencer", reason:"Не даёт войти в Chronosphere с способностями"},
-    {id:"disruptor", reason:"Glimpse и Static Storm снимают преимущество тайминга"},
-    {id:"morphling", reason:"Spell immunity игнорирует контроль в Хроне"}
+    {id:"silencer", reason:"Не даёт войти в Хроносферу с способностями"},
+    {id:"disruptor", reason:"Проблеск и Статический шторм снимают преимущество тайминга"},
+    {id:"morphling", reason:"Иммунитет к магии игнорирует контроль в Хроне"}
   ],
   "terrorblade": [
     {id:"axe", reason:"Убивает иллюзии и давит на линии"},
-    {id:"necrophos", reason:"Reaper's Scythe добивает по проценту HP"},
-    {id:"doom", reason:"Break снимает Metamorphosis эффекты"}
+    {id:"necrophos", reason:"Коса жнеца добивает по проценту здоровья"},
+    {id:"doom", reason:"Брейк снимает эффекты Метаморфозы"}
   ],
   "invoker": [
-    {id:"silencer", reason:"Global Silence полностью выключает комбо"},
-    {id:"nyx-assassin", reason:"Mana Burn лишает маны на комбо-каст"},
+    {id:"silencer", reason:"Глобальное безмолвие полностью выключает комбо"},
+    {id:"nyx-assassin", reason:"Сжигание маны лишает маны на комбо-каст"},
     {id:"axe", reason:"Быстрая инициация не даёт откастовать"}
   ],
   "tinker": [
-    {id:"silencer", reason:"Silence и обнуление активок ломают ротацию"},
-    {id:"nyx-assassin", reason:"Mana Burn выжигает ману на телепорты"},
-    {id:"anti-mage", reason:"Mana Break истощает ману, Blink догоняет"}
+    {id:"silencer", reason:"Силенс и обнуление активок ломают ротацию"},
+    {id:"nyx-assassin", reason:"Сжигание маны выжигает ману на телепорты"},
+    {id:"anti-mage", reason:"Разрушение маны истощает ману, а рывок догоняет"}
   ],
   "shadow-fiend": [
-    {id:"axe", reason:"Быстрая инициация не даёт откастовать Requiem"},
-    {id:"nyx-assassin", reason:"Impale+silence ловят перед Requiem"},
-    {id:"bristleback", reason:"Много HP и брони против физ-урона SF"}
+    {id:"axe", reason:"Быстрая инициация не даёт откастовать Реквием душ"},
+    {id:"nyx-assassin", reason:"Пронзание и силенс ловят перед Реквием душ"},
+    {id:"bristleback", reason:"Много здоровья и брони против физического урона Ночного Дьявола"}
   ],
   "puck": [
-    {id:"nyx-assassin", reason:"Impale ловит сквозь Phase Shift"},
+    {id:"nyx-assassin", reason:"Пронзание ловит сквозь Смещение фазы"},
     {id:"lion", reason:"Долгий стан фиксирует эфемерную Пак"}
   ],
   "morphling": [
-    {id:"viper", reason:"Nethertoxin снимает атрибуты и спелл иммунитет"},
-    {id:"silencer", reason:"Silence не даёт вафлить и лечиться"},
-    {id:"doom", reason:"Doom запрещает использование способностей"}
+    {id:"viper", reason:"Эфирный яд снимает атрибуты и спелл иммунитет"},
+    {id:"silencer", reason:"Силенс не даёт вафлить и лечиться"},
+    {id:"doom", reason:"Дум запрещает использование способностей"}
   ],
   "pudge": [
-    {id:"bloodseeker", reason:"Видит низкое HP и добивает Rupture"},
-    {id:"windranger", reason:"Focus Fire убивает быстро"},
+    {id:"bloodseeker", reason:"Видит низкое здоровье и добивает Разрыв"},
+    {id:"windranger", reason:"Прицельный огонь убивает быстро"},
     {id:"silencer", reason:"Не даёт кастовать хук на подходе"}
   ],
   "lifestealer": [
-    {id:"viper", reason:"Nethertoxin отключает Spell Immunity"},
-    {id:"necrophos", reason:"Reaper's Scythe добивает по % HP несмотря на реген"},
-    {id:"dazzle", reason:"Shallow Grave не даёт добить, но лечение Лайфа рушится под ним же"}
+    {id:"viper", reason:"Эфирный яд отключает иммунитет к магии"},
+    {id:"necrophos", reason:"Коса жнеца добивает по % здоровья несмотря на реген"},
+    {id:"dazzle", reason:"Неглубокую могилу не даёт добить, но лечение Лайфа рушится под ним же"}
   ],
   "bristleback": [
-    {id:"doom", reason:"Break убирает Quill Spray/Bristleback пассивки"},
+    {id:"doom", reason:"Брейк убирает Разброс игл и другие пассивки Ежака"},
     {id:"silencer", reason:"Не даёт разворачиваться спиной корректно через контроль"},
-    {id:"viper", reason:"Nether Toxin режет броню и снимает баффы"}
+    {id:"viper", reason:"Эфирный яд режет броню и снимает баффы"}
   ],
   "huskar": [
-    {id:"lion", reason:"Магический бурст добивает низкое HP Хускара"},
+    {id:"lion", reason:"Магический бурст добивает низкий запас здоровья Хускара"},
     {id:"skywrath-mage", reason:"Чистый магический урон убивает несмотря на резист"},
-    {id:"necrophos", reason:"Reaper's Scythe игнорирует физ. резисты Хускара"}
+    {id:"necrophos", reason:"Коса жнеца игнорирует физ. резисты Хускара"}
   ],
   "chaos-knight": [
-    {id:"axe", reason:"АОЕ снимает иллюзии, Call ловит оригинал"},
-    {id:"necrophos", reason:"Урон по % HP не зависит от брони и крита"}
+    {id:"axe", reason:"АОЕ снимает иллюзии, Клич ловит оригинал"},
+    {id:"necrophos", reason:"Урон по % здоровья не зависит от брони и крита"}
   ],
   "naga-siren": [
     {id:"axe", reason:"Прерывает фарм иллюзий давлением"},
-    {id:"lion", reason:"Стан не даёт уйти в Song of the Siren вовремя"}
+    {id:"lion", reason:"Стан не даёт уйти в Песнь сирены вовремя"}
   ],
   "broodmother": [
-    {id:"bounty-hunter", reason:"Обзор и Track снимают невидимость пауков"},
-    {id:"axe", reason:"АОЕ Culling Blade добивает пауков и саму Брудмать"}
+    {id:"bounty-hunter", reason:"Обзор и Слежка снимают невидимость пауков"},
+    {id:"axe", reason:"АОЕ Клинок жатвы добивает пауков и саму Брудмать"}
   ],
   "clinkz": [
-    {id:"bounty-hunter", reason:"Track снимает невидимость"},
-    {id:"nyx-assassin", reason:"Impale ловит из вижена"}
+    {id:"bounty-hunter", reason:"Слежка снимает невидимость"},
+    {id:"nyx-assassin", reason:"Пронзание ловит из вижена"}
   ],
   "weaver": [
-    {id:"bounty-hunter", reason:"Обзор и Track ограничивают побег"},
-    {id:"silencer", reason:"Не даёт использовать Shukuchi/Time Lapse эффективно"}
+    {id:"bounty-hunter", reason:"Обзор и Слежка ограничивают побег"},
+    {id:"silencer", reason:"Не даёт использовать Сюкути/Отскок во времени эффективно"}
   ],
   "meepo": [
-    {id:"earthshaker", reason:"Echo Slam уничтожает всех клонов разом"},
-    {id:"tidehunter", reason:"Ravage сносит всю пачку меп"},
-    {id:"sand-king", reason:"Epicenter бьёт по всем клонам"}
+    {id:"earthshaker", reason:"Гулкий удар уничтожает всех клонов разом"},
+    {id:"tidehunter", reason:"Опустошение сносит всю пачку меп"},
+    {id:"sand-king", reason:"Эпицентр бьёт по всем клонам"}
   ],
   "arc-warden": [
-    {id:"axe", reason:"Быстро убивает Warden/клона до разгона"},
-    {id:"bloodseeker", reason:"Rupture не даёт кайтить клоном"}
+    {id:"axe", reason:"Быстро убивает Стража/клона до разгона"},
+    {id:"bloodseeker", reason:"Разрыв не даёт кайтить клоном"}
   ],
   "drow-ranger": [
-    {id:"axe", reason:"Call не даёт стрелять и заставляет драться"},
+    {id:"axe", reason:"Клич не даёт стрелять и заставляет драться"},
     {id:"clockwerk", reason:"Гэпклозер+стан не дают удерживать дистанцию"}
   ],
   "sniper": [
     {id:"axe", reason:"Мгновенная инициация не даёт держать дистанцию"},
     {id:"clockwerk", reason:"Прыжок в лицо и стан"},
-    {id:"nyx-assassin", reason:"Impale из вижена ловит на любой дистанции"}
+    {id:"nyx-assassin", reason:"Пронзание из вижена ловит на любой дистанции"}
   ],
   "windranger": [
-    {id:"axe", reason:"Быстрая инициация не даёт откастовать Focus Fire"},
-    {id:"nyx-assassin", reason:"Mana burn и стан ломают комбо"}
+    {id:"axe", reason:"Быстрая инициация не даёт откастовать Прицельный огонь"},
+    {id:"nyx-assassin", reason:"Сжигание маны и стан ломают комбо"}
   ],
   "zeus": [
-    {id:"silencer", reason:"Global Silence полностью выключает урон"},
-    {id:"nyx-assassin", reason:"Mana Burn лишает маны на нюки"},
-    {id:"anti-mage", reason:"Spell shield и mana break душат Зевса"}
+    {id:"silencer", reason:"Глобальное безмолвие полностью выключает урон"},
+    {id:"nyx-assassin", reason:"Сжигание маны лишает маны на нюки"},
+    {id:"anti-mage", reason:"Щит от заклинаний и Разрушение маны душат Зевса"}
   ],
   "lina": [
     {id:"axe", reason:"Быстрая инициация не даёт откастовать комбо"},
-    {id:"nyx-assassin", reason:"Impale+silence ловят до нюков"}
+    {id:"nyx-assassin", reason:"Пронзание и силенс ловят до нюков"}
   ],
   "skywrath-mage": [
     {id:"axe", reason:"Быстрая инициация убивает хрупкого героя"},
-    {id:"nyx-assassin", reason:"Silence снимает Ancient Seal и нюки"}
+    {id:"nyx-assassin", reason:"Силенс снимает Печать древних и нюки"}
   ],
   "queen-of-pain": [
-    {id:"nyx-assassin", reason:"Impale ловит сквозь Blink"},
-    {id:"axe", reason:"Call не даёт уйти в блинк"}
+    {id:"nyx-assassin", reason:"Пронзание ловит сквозь блинк"},
+    {id:"axe", reason:"Клич не даёт уйти в блинк"}
   ],
   "necrophos": [
-    {id:"silencer", reason:"Silence не даёт откастовать ульт"},
-    {id:"anti-mage", reason:"Spell shield снижает магический урон и ману жрёт Break"}
+    {id:"silencer", reason:"Силенс не даёт откастовать ульт"},
+    {id:"anti-mage", reason:"Щит от заклинаний снижает магический урон, а Разрушение маны истощает ману"}
   ],
   "enigma": [
-    {id:"silencer", reason:"Не даёт откастовать Black Hole"},
-    {id:"nyx-assassin", reason:"Прерывает channeling ульта станом"},
-    {id:"axe", reason:"Быстрая инициация ловит до Black Hole"}
+    {id:"silencer", reason:"Не даёт откастовать Чёрную дыру"},
+    {id:"nyx-assassin", reason:"Прерывает ченнелинг ульта станом"},
+    {id:"axe", reason:"Быстрая инициация ловит до Чёрную дыру"}
   ],
   "tidehunter": [
-    {id:"silencer", reason:"Не даёт откастовать Ravage"},
+    {id:"silencer", reason:"Не даёт откастовать Опустошение"},
     {id:"nyx-assassin", reason:"Станит и прерывает подготовку к ульту"}
   ],
   "magnus": [
-    {id:"silencer", reason:"Не даёт использовать RP"},
+    {id:"silencer", reason:"Не даёт использовать Разворот полярности"},
     {id:"nyx-assassin", reason:"Ловит до инициации станом"}
   ],
   "earthshaker": [
-    {id:"nyx-assassin", reason:"Прерывает channeling Echo Slam"},
+    {id:"nyx-assassin", reason:"Прерывает ченнелинг Гулкого удара"},
     {id:"silencer", reason:"Не даёт откастовать ульт"}
   ],
   "witch-doctor": [
-    {id:"nyx-assassin", reason:"Прерывает Death Ward станом"},
+    {id:"nyx-assassin", reason:"Прерывает Дозорного смерти станом"},
     {id:"axe", reason:"Быстрая инициация до каста"}
   ],
   "shadow-shaman": [
@@ -361,62 +361,62 @@ const CURATED_COUNTERS = {
     {id:"axe", reason:"Быстрая инициация"}
   ],
   "outworld-destroyer": [
-    {id:"anti-mage", reason:"Spell shield режет магический урон OD"},
+    {id:"anti-mage", reason:"Щит от заклинаний режет магический урон Разрушителя"},
     {id:"axe", reason:"Быстрая инициация ловит хрупкого героя"}
   ],
   "leshrac": [
     {id:"axe", reason:"Быстрая инициация убивает хрупкого героя"},
-    {id:"anti-mage", reason:"Spell shield снижает магический урон"}
+    {id:"anti-mage", reason:"Щит от заклинаний снижает магический урон"}
   ],
   "pugna": [
-    {id:"axe", reason:"Быстрая инициация не даёт использовать Nether Ward"},
-    {id:"anti-mage", reason:"Mana burn контрит манозависимость"}
+    {id:"axe", reason:"Быстрая инициация не даёт использовать Эфирного стража"},
+    {id:"anti-mage", reason:"Разрушение маны контрит манозависимость"}
   ],
   "death-prophet": [
     {id:"axe", reason:"Убивает призраков и саму ДП"},
-    {id:"doom", reason:"Break снимает Spirit Siphon"}
+    {id:"doom", reason:"Брейк снимает Похищение духа"}
   ],
   "beastmaster": [
     {id:"axe", reason:"АОЕ убивает призывы"},
-    {id:"doom", reason:"Doom выключает героя из боя"}
+    {id:"doom", reason:"Дум выключает героя из боя"}
   ],
   "lycan": [
     {id:"axe", reason:"АОЕ убивает волков"},
-    {id:"doom", reason:"Doom выключает из боя целиком"}
+    {id:"doom", reason:"Дум выключает из боя целиком"}
   ],
   "visage": [
     {id:"axe", reason:"АОЕ убивает фамильяров"},
   ],
   "nature-prophet": [
     {id:"axe", reason:"Быстро убивает трипсы"},
-    {id:"bounty-hunter", reason:"Track находит НП на телепорте"}
+    {id:"bounty-hunter", reason:"Слежка находит НП на телепорте"}
   ],
   "io": [
-    {id:"nyx-assassin", reason:"Mana Burn и стан ловят несмотря на Relocate"},
-    {id:"axe", reason:"Call фиксирует перед Relocate"}
+    {id:"nyx-assassin", reason:"Сжигание маны и стан ловят несмотря на Перемещение"},
+    {id:"axe", reason:"Клич фиксирует перед Перемещение"}
   ],
   "dark-willow": [
-    {id:"nyx-assassin", reason:"Silence не даёт откастовать"},
+    {id:"nyx-assassin", reason:"Силенс не даёт откастовать"},
     {id:"axe", reason:"Быстрая инициация"}
   ],
   "rubick": [
-    {id:"nyx-assassin", reason:"Silence не даёт украсть заклинание"},
+    {id:"nyx-assassin", reason:"Силенс не даёт украсть заклинание"},
     {id:"axe", reason:"Быстрая инициация"}
   ],
   "keeper-of-the-light": [
     {id:"axe", reason:"Быстро убивает хрупкого КОТЛ"},
-    {id:"nyx-assassin", reason:"Mana Burn лишает маны"}
+    {id:"nyx-assassin", reason:"Сжигание маны лишает маны"}
   ],
   "ancient-apparition": [
-    {id:"axe", reason:"Быстрая инициация до Ice Blast"},
-    {id:"nyx-assassin", reason:"Silence не даёт откастовать"}
+    {id:"axe", reason:"Быстрая инициация до Ледяной снаряд"},
+    {id:"nyx-assassin", reason:"Силенс не даёт откастовать"}
   ],
   "batrider": [
-    {id:"silencer", reason:"Не даёт использовать Flaming Lasso"},
+    {id:"silencer", reason:"Не даёт использовать Огненное лассо"},
     {id:"nyx-assassin", reason:"Прерывает подготовку станом"}
   ],
   "void-spirit": [
-    {id:"nyx-assassin", reason:"Impale ловит сквозь Dissimilate"},
-    {id:"silencer", reason:"Silence не даёт разгоняться порталами"}
+    {id:"nyx-assassin", reason:"Пронзание ловит сквозь Разделение"},
+    {id:"silencer", reason:"Силенс не даёт разгоняться порталами"}
   ]
 };

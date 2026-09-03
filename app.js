@@ -5,7 +5,7 @@ const RULES = [
   {strong:"detection",   weak:"invis",        text:h => `${h.ru} даёт обзор/детект и снимает невидимость`},
   {strong:"silence",     weak:"activeReliant",text:h => `${h.ru} силенсит — враг зависит от активных способностей`},
   {strong:"silence",     weak:"channeling",   text:h => `${h.ru} может сорвать ченнелящийся ульт силенсом/станом`},
-  {strong:"breakEffect", weak:"auraPassive",  text:h => `${h.ru} снимает пассивки/ауры через Break`},
+  {strong:"breakEffect", weak:"auraPassive",  text:h => `${h.ru} снимает пассивки/ауры через брейк`},
   {strong:"burstPhys",   weak:"squishy",      text:h => `${h.ru} добивает хрупкого героя физическим бурстом`},
   {strong:"burstMagic",  weak:"squishy",      text:h => `${h.ru} убивает магическим бурстом до размена`},
   {strong:"spellImmune", weak:"magicBurst",   text:h => `${h.ru} игнорирует магический урон/контроль`},
@@ -100,7 +100,7 @@ function heroInitials(name) {
 function heroTile(hero, selected) {
   const div = document.createElement("div");
   div.className = "hero-tile attr-" + hero.attr + (selected ? " selected" : "");
-  div.title = hero.ru + " (" + hero.en + ")";
+  div.title = hero.ru;
   div.innerHTML = `<span class="hero-initials">${heroInitials(hero.en)}</span><span class="hero-name">${hero.ru}</span>`;
   div.addEventListener("click", () => toggleEnemy(hero.id));
   return div;
@@ -164,7 +164,7 @@ function renderResults() {
       <div class="result-rank">#${i + 1}</div>
       <div class="result-avatar"><span>${heroInitials(r.hero.en)}</span></div>
       <div class="result-body">
-        <div class="result-name">${r.hero.ru} <span class="result-en">(${r.hero.en})</span></div>
+        <div class="result-name">${r.hero.ru}</div>
         <div class="result-score">Сила контрпика: ${"★".repeat(Math.min(5, Math.ceil(r.score/2)))}</div>
         <ul class="result-reasons">
           ${r.reasons.map(x => `<li>${x}</li>`).join("")}
