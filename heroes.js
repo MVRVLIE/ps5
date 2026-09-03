@@ -187,8 +187,9 @@ const CURATED_COUNTERS = {
     {id:"disruptor", reason:"Glimpse resets his positioning before Omnislash"}
   ],
   "riki": [
-    {id:"bounty-hunter", reason:"Track and vision strip the invisibility"},
-    {id:"slardar", reason:"Amplify Damage reveals Riki"},
+    {id:"bounty-hunter", reason:"Track and vision strip the invisibility, and Riki has no escape once he's spotted"},
+    {id:"slardar", reason:"Amplify Damage reveals Riki and rips through his low armor once caught"},
+    {id:"zeus", reason:"His ultimate hits Riki through the invisibility and Riki's low HP can't survive the burst once he's found"},
     {id:"nyx-assassin", reason:"Impale lands off vision, and silence shuts down his tools"}
   ],
   "slark": [
@@ -332,8 +333,10 @@ const CURATED_COUNTERS = {
     {id:"axe", reason:"Call denies the Blink escape"}
   ],
   "necrophos": [
-    {id:"silencer", reason:"Silence denies the ultimate cast"},
-    {id:"anti-mage", reason:"Spell Shield lowers magic damage, and Mana Break drains his mana"}
+    {id:"silencer", reason:"Silence denies the ultimate cast and shuts off his poke"},
+    {id:"anti-mage", reason:"Spell Shield lowers his magic damage, and Mana Break drains the mana behind his spells"},
+    {id:"bristleback", reason:"Regenerates through Death Pulse poke and tanks Ghost Shroud damage windows"},
+    {id:"bloodseeker", reason:"Rupture punishes him even while he tries to kite and out-heal with Sadist"}
   ],
   "enigma": [
     {id:"silencer", reason:"Denies the Black Hole cast"},

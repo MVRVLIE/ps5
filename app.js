@@ -21,46 +21,62 @@ const RULES = [
   {strong:"trueStrike",  weak:"physical",     text:h => `${h.en} ignores evasion and always connects`}
 ];
 
+const CURATED_WEIGHT = 5;
+const HEURISTIC_WEIGHT = 1;
+
 function computeCounters(enemyIds, poolAttrFilter) {
   const enemies = enemyIds.map(id => HERO_BY_ID[id]).filter(Boolean);
   if (enemies.length === 0) return [];
 
   const scores = {};
   const reasons = {};
+  const curatedHit = {};
 
   for (const cand of HEROES) {
     if (enemyIds.includes(cand.id)) continue;
     if (poolAttrFilter && poolAttrFilter !== "all" && cand.attr !== poolAttrFilter) continue;
     scores[cand.id] = 0;
     reasons[cand.id] = [];
+    curatedHit[cand.id] = false;
   }
 
+  let anyCurated = false;
+
   for (const enemy of enemies) {
-    // curated (heavier weight, more specific)
+    // curated hard counters (known matchups) — weighted well above the heuristic
     const curated = CURATED_COUNTERS[enemy.id] || [];
     for (const c of curated) {
       if (!(c.id in scores)) continue;
-      scores[c.id] += 3;
+      scores[c.id] += CURATED_WEIGHT;
+      curatedHit[c.id] = true;
+      anyCurated = true;
       reasons[c.id].push(`vs ${enemy.en}: ${c.reason}`);
     }
 
-    // tag-based heuristic
+    // tag-based heuristic — a lighter-weight fallback signal
     for (const rule of RULES) {
       if (!enemy.weak.includes(rule.weak)) continue;
       for (const cand of HEROES) {
         if (!(cand.id in scores)) continue;
         if (cand.strong.includes(rule.strong)) {
-          scores[cand.id] += 1;
+          scores[cand.id] += HEURISTIC_WEIGHT;
           reasons[cand.id].push(`vs ${enemy.en}: ${rule.text(cand)}`);
         }
       }
     }
   }
 
-  const results = Object.keys(scores)
-    .map(id => ({ hero: HERO_BY_ID[id], score: scores[id], reasons: dedupeReasons(reasons[id]) }))
-    .filter(r => r.score > 0)
-    .sort((a, b) => b.score - a.score);
+  let results = Object.keys(scores)
+    .map(id => ({ hero: HERO_BY_ID[id], score: scores[id], curated: curatedHit[id], reasons: dedupeReasons(reasons[id]) }))
+    .filter(r => r.score > 0);
+
+  // Once we have real curated matchups on the board, drop picks that only
+  // scraped together a single generic tag match — that's noise, not a counter.
+  if (anyCurated) {
+    results = results.filter(r => r.curated || r.score >= HEURISTIC_WEIGHT * 2);
+  }
+
+  results.sort((a, b) => b.score - a.score || a.hero.en.localeCompare(b.hero.en));
 
   return results.slice(0, 12);
 }
