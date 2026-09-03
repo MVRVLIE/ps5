@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dota 2 — Подбор контрпиков</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="site-header">
+  <h1>⚔ Подбор контрпиков Dota 2</h1>
+  <p>Выбери героев противника — получишь героев, которые их контрят, и почему.</p>
+</header>
+
+<main class="layout">
+  <section class="panel picker-panel">
+    <div class="panel-head">
+      <h2>Герои противника</h2>
+      <button id="clear-btn" class="ghost-btn">Очистить</button>
+    </div>
+
+    <div id="enemy-list" class="enemy-list"></div>
+
+    <div class="controls">
+      <input id="search" type="text" placeholder="Поиск героя (рус/eng)…" autocomplete="off">
+      <div class="attr-filter" data-target="enemy">
+        <button data-attr="all" class="active">Все</button>
+        <button data-attr="str">Сила</button>
+        <button data-attr="agi">Ловк.</button>
+        <button data-attr="int">Инт.</button>
+      </div>
+    </div>
+
+    <div id="enemy-grid" class="hero-grid"></div>
+  </section>
+
+  <section class="panel result-panel">
+    <div class="panel-head">
+      <h2>Рекомендуемые контрпики</h2>
+      <div class="attr-filter" data-target="pool">
+        <button data-attr="all" class="active">Любой атр.</button>
+        <button data-attr="str">Сила</button>
+        <button data-attr="agi">Ловк.</button>
+        <button data-attr="int">Инт.</button>
+      </div>
+    </div>
+    <div id="results" class="results"></div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <p>Рекомендации построены на типичных игровых механиках (силенс, детект, брейк, бурст, контроль, живучесть) и известных матч-апах меты. Не является 100% точным анализом винрейтов — используйте как подсказку.</p>
+</footer>
+
+<script src="heroes.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
