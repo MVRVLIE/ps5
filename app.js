@@ -1,24 +1,24 @@
 const HERO_BY_ID = Object.fromEntries(HEROES.map(h => [h.id, h]));
 
-// strong -> weak: за что сильная сторона контрит слабость врага, и текст причины
+// strong -> weak: what the strong side does to exploit the enemy's weakness
 const RULES = [
-  {strong:"detection",   weak:"invis",        text:h => `${h.ru} даёт обзор/детект и снимает невидимость`},
-  {strong:"silence",     weak:"activeReliant",text:h => `${h.ru} силенсит — враг зависит от активных способностей`},
-  {strong:"silence",     weak:"channeling",   text:h => `${h.ru} может сорвать ченнелящийся ульт силенсом/станом`},
-  {strong:"breakEffect", weak:"auraPassive",  text:h => `${h.ru} снимает пассивки/ауры через брейк`},
-  {strong:"burstPhys",   weak:"squishy",      text:h => `${h.ru} добивает хрупкого героя физическим бурстом`},
-  {strong:"burstMagic",  weak:"squishy",      text:h => `${h.ru} убивает магическим бурстом до размена`},
-  {strong:"spellImmune", weak:"magicBurst",   text:h => `${h.ru} игнорирует магический урон/контроль`},
-  {strong:"armorReduction", weak:"physical",  text:h => `${h.ru} снижает броню, обнуляя физический урон врага`},
-  {strong:"evasion",     weak:"physical",     text:h => `${h.ru} даёт уклонение от физических атак`},
-  {strong:"tankyStr",    weak:"burstPhys",    text:h => `${h.ru} слишком живуч для бурста этого героя`},
-  {strong:"gapCloser",   weak:"immobile",     text:h => `${h.ru} легко догоняет малоподвижного героя`},
-  {strong:"longStun",    weak:"immobile",     text:h => `${h.ru} фиксирует героя без побега надолго`},
-  {strong:"aoe",         weak:"illusion",     text:h => `${h.ru} убивает иллюзии по площади`},
-  {strong:"aoe",         weak:"summons",      text:h => `${h.ru} убивает призывы по площади`},
-  {strong:"sustain",     weak:"pokeReliant",  text:h => `${h.ru} перебивает харасс лечением/реген.`},
-  {strong:"antiPoke",    weak:"pokeReliant",  text:h => `${h.ru} хорошо переживает харасс`},
-  {strong:"trueStrike",  weak:"physical",     text:h => `${h.ru} игнорирует уклонение и добивает точно`}
+  {strong:"detection",   weak:"invis",        text:h => `${h.en} grants vision/detection and strips invisibility`},
+  {strong:"silence",     weak:"activeReliant",text:h => `${h.en} silences — this enemy depends on active abilities`},
+  {strong:"silence",     weak:"channeling",   text:h => `${h.en} can interrupt a vulnerable channeled ultimate`},
+  {strong:"breakEffect", weak:"auraPassive",  text:h => `${h.en} strips passives/auras with Break`},
+  {strong:"burstPhys",   weak:"squishy",      text:h => `${h.en} finishes a fragile hero with physical burst`},
+  {strong:"burstMagic",  weak:"squishy",      text:h => `${h.en} kills with magical burst before a trade`},
+  {strong:"spellImmune", weak:"magicBurst",   text:h => `${h.en} ignores magic damage/control`},
+  {strong:"armorReduction", weak:"physical",  text:h => `${h.en} shreds armor, gutting this enemy's physical damage`},
+  {strong:"evasion",     weak:"physical",     text:h => `${h.en} gives evasion against physical attacks`},
+  {strong:"tankyStr",    weak:"burstPhys",    text:h => `${h.en} is too tanky for this hero's burst`},
+  {strong:"gapCloser",   weak:"immobile",     text:h => `${h.en} easily catches a low-mobility hero`},
+  {strong:"longStun",    weak:"immobile",     text:h => `${h.en} locks the hero down with no escape`},
+  {strong:"aoe",         weak:"illusion",     text:h => `${h.en} clears illusions with area damage`},
+  {strong:"aoe",         weak:"summons",      text:h => `${h.en} clears summons with area damage`},
+  {strong:"sustain",     weak:"pokeReliant",  text:h => `${h.en} outheals the poke damage`},
+  {strong:"antiPoke",    weak:"pokeReliant",  text:h => `${h.en} shrugs off harass damage`},
+  {strong:"trueStrike",  weak:"physical",     text:h => `${h.en} ignores evasion and always connects`}
 ];
 
 function computeCounters(enemyIds, poolAttrFilter) {
@@ -36,22 +36,22 @@ function computeCounters(enemyIds, poolAttrFilter) {
   }
 
   for (const enemy of enemies) {
-    // curated (более весомые и конкретные)
+    // curated (heavier weight, more specific)
     const curated = CURATED_COUNTERS[enemy.id] || [];
     for (const c of curated) {
       if (!(c.id in scores)) continue;
       scores[c.id] += 3;
-      reasons[c.id].push(`против ${enemy.ru}: ${c.reason}`);
+      reasons[c.id].push(`vs ${enemy.en}: ${c.reason}`);
     }
 
-    // эвристика по тегам
+    // tag-based heuristic
     for (const rule of RULES) {
       if (!enemy.weak.includes(rule.weak)) continue;
       for (const cand of HEROES) {
         if (!(cand.id in scores)) continue;
         if (cand.strong.includes(rule.strong)) {
           scores[cand.id] += 1;
-          reasons[cand.id].push(`против ${enemy.ru}: ${rule.text(cand)}`);
+          reasons[cand.id].push(`vs ${enemy.en}: ${rule.text(cand)}`);
         }
       }
     }
@@ -100,8 +100,8 @@ function heroInitials(name) {
 function heroTile(hero, selected) {
   const div = document.createElement("div");
   div.className = "hero-tile attr-" + hero.attr + (selected ? " selected" : "");
-  div.title = hero.ru;
-  div.innerHTML = `<span class="hero-initials">${heroInitials(hero.en)}</span><span class="hero-name">${hero.ru}</span>`;
+  div.title = hero.en;
+  div.innerHTML = `<span class="hero-initials">${heroInitials(hero.en)}</span><span class="hero-name">${hero.en}</span>`;
   div.addEventListener("click", () => toggleEnemy(hero.id));
   return div;
 }
@@ -123,7 +123,7 @@ function renderEnemyGrid() {
   const filtered = HEROES.filter(h => {
     if (state.attrFilterEnemy !== "all" && h.attr !== state.attrFilterEnemy) return false;
     if (!q) return true;
-    return h.ru.toLowerCase().includes(q) || h.en.toLowerCase().includes(q);
+    return h.en.toLowerCase().includes(q);
   });
   for (const h of filtered) {
     enemyGrid.appendChild(heroTile(h, state.enemies.includes(h.id)));
@@ -133,14 +133,14 @@ function renderEnemyGrid() {
 function renderEnemyList() {
   enemyList.innerHTML = "";
   if (state.enemies.length === 0) {
-    enemyList.innerHTML = `<span class="placeholder">Выберите героев врага слева (до 5)</span>`;
+    enemyList.innerHTML = `<span class="placeholder">Pick the enemy heroes on the left (up to 5)</span>`;
     return;
   }
   for (const id of state.enemies) {
     const h = HERO_BY_ID[id];
     const chip = document.createElement("div");
     chip.className = "chip attr-" + h.attr;
-    chip.innerHTML = `${h.ru} <button aria-label="Убрать">×</button>`;
+    chip.innerHTML = `${h.en} <button aria-label="Remove">×</button>`;
     chip.querySelector("button").addEventListener("click", () => toggleEnemy(id));
     enemyList.appendChild(chip);
   }
@@ -149,12 +149,12 @@ function renderEnemyList() {
 function renderResults() {
   resultsEl.innerHTML = "";
   if (state.enemies.length === 0) {
-    resultsEl.innerHTML = `<div class="placeholder">Как только выберете хотя бы одного героя врага — здесь появятся рекомендации.</div>`;
+    resultsEl.innerHTML = `<div class="placeholder">Pick at least one enemy hero and counter picks will show up here.</div>`;
     return;
   }
   const results = computeCounters(state.enemies, state.attrFilterPool);
   if (results.length === 0) {
-    resultsEl.innerHTML = `<div class="placeholder">Явных контрпиков не найдено — попробуйте снять фильтр по атрибуту.</div>`;
+    resultsEl.innerHTML = `<div class="placeholder">No strong counters found — try clearing the attribute filter.</div>`;
     return;
   }
   results.forEach((r, i) => {
@@ -164,8 +164,8 @@ function renderResults() {
       <div class="result-rank">#${i + 1}</div>
       <div class="result-avatar"><span>${heroInitials(r.hero.en)}</span></div>
       <div class="result-body">
-        <div class="result-name">${r.hero.ru}</div>
-        <div class="result-score">Сила контрпика: ${"★".repeat(Math.min(5, Math.ceil(r.score/2)))}</div>
+        <div class="result-name">${r.hero.en}</div>
+        <div class="result-score">COUNTER STRENGTH: ${"★".repeat(Math.min(5, Math.ceil(r.score/2)))}</div>
         <ul class="result-reasons">
           ${r.reasons.map(x => `<li>${x}</li>`).join("")}
         </ul>

@@ -1,422 +1,422 @@
 /*
- * База героев Dota 2 для подбора контрпиков.
+ * Dota 2 hero database for the counter-pick tool.
  * attr: str | agi | int | all
  * atk: melee | ranged
- * weak (слабости героя, за что его можно "контрить"):
- *   invis        - полагается на невидимость
- *   activeReliant- сильно зависит от активных способностей/предметов (страдает от силенса)
- *   channeling   - имеет уязвимый ченнелящийся ульт
- *   auraPassive  - сила держится на пассивках/аурах (страдает от break-эффектов)
- *   physical     - основной урон физический (страдает от брони/armor reduction/evasion)
- *   magicBurst   - убивает магическим бурстом (страдает от magic resistance/spell immunity)
- *   squishy      - низкий запас HP, умирает от бурста
- *   immobile     - нет побега/блинка, уязвим к гэпклозерам и стану
- *   pokeReliant  - играет через дальний харасс (страдает от sustain/regen)
- *   illusion     - зависит от иллюзий (страдает от АОЕ/cleave)
- *   summons      - зависит от призывов (страдает от АОЕ)
- *   tanky        - живучий, но обычно медленный/уязвим к разгону брони или чистому урону
- * strong (сильные стороны, которыми герой контрит других):
- *   detection    - даёт обзор/детект невидимости
- *   silence      - силенсит
- *   breakEffect  - имеет break (снимает пассивки)
- *   burstPhys    - физический бурст
- *   burstMagic   - магический бурст
- *   spellImmune  - даёт/имеет иммунитет к магии
- *   tankyStr     - высокая живучесть/сложно убить бурстом
- *   gapCloser    - хороший гэпклозер/инициация
- *   longStun     - долгий контроль
- *   sustain      - лечение/реген
- *   aoe          - сильное АОЕ
- *   armorReduction - снижает броню
- *   evasion      - даёт уклонение
- *   trueStrike   - урон, игнорирующий уклонение
- *   antiPoke     - хорошо переживает харасс (реген/лечение/иммунитет)
+ * weak (what makes the hero counterable):
+ *   invis        - relies on invisibility
+ *   activeReliant- heavily dependent on active abilities/items (hurt by silence)
+ *   channeling   - has a vulnerable channeled ultimate
+ *   auraPassive  - power comes from passives/auras (hurt by break effects)
+ *   physical     - deals mostly physical damage (hurt by armor/armor reduction/evasion)
+ *   magicBurst   - kills with magic burst (hurt by magic resistance/spell immunity)
+ *   squishy      - low HP pool, dies to burst
+ *   immobile     - no escape/blink, vulnerable to gap-closers and stuns
+ *   pokeReliant  - plays through long-range harass (hurt by sustain/regen)
+ *   illusion     - relies on illusions (hurt by AOE/cleave)
+ *   summons      - relies on summoned units (hurt by AOE)
+ *   tanky        - durable but usually slow/vulnerable to armor shred or pure damage
+ * strong (what the hero uses to counter others):
+ *   detection    - grants vision/true sight
+ *   silence      - silences
+ *   breakEffect  - has Break (removes passives)
+ *   burstPhys    - physical burst
+ *   burstMagic   - magical burst
+ *   spellImmune  - grants/has spell immunity
+ *   tankyStr     - very durable, hard to burst down
+ *   gapCloser    - strong gap-closer/initiator
+ *   longStun     - long-lasting control
+ *   sustain      - healing/regen
+ *   aoe          - strong area damage
+ *   armorReduction - reduces armor
+ *   evasion      - grants evasion
+ *   trueStrike   - damage that ignores evasion
+ *   antiPoke     - shrugs off harass (regen/lifesteal/immunity)
  */
 
 const HEROES = [
   // STRENGTH
-  {id:"anti-mage", en:"Anti-Mage", ru:"Анти-маг", attr:"agi", atk:"melee", weak:["physical","immobile"], strong:["spellImmune","burstPhys","gapCloser"]},
-  {id:"axe", en:"Axe", ru:"Топор", attr:"str", atk:"melee", weak:["immobile","physical"], strong:["gapCloser","longStun","tankyStr"]},
-  {id:"bristleback", en:"Bristleback", ru:"Ежак", attr:"str", atk:"melee", weak:["physical"], strong:["tankyStr","sustain"]},
-  {id:"centaur", en:"Centaur Warrunner", ru:"Кентавр", attr:"str", atk:"melee", weak:["immobile"], strong:["gapCloser","longStun","tankyStr"]},
-  {id:"chaos-knight", en:"Chaos Knight", ru:"Рыцарь Хаоса", attr:"str", atk:"melee", weak:["illusion","physical"], strong:["burstPhys","gapCloser","tankyStr"]},
-  {id:"clockwerk", en:"Clockwerk", ru:"Клокверк", attr:"str", atk:"melee", weak:["immobile"], strong:["gapCloser","longStun"]},
-  {id:"dawnbreaker", en:"Dawnbreaker", ru:"Заря", attr:"str", atk:"melee", weak:["physical"], strong:["sustain","burstPhys","tankyStr"]},
-  {id:"doom", en:"Doom", ru:"Дум", attr:"str", atk:"melee", weak:["immobile"], strong:["breakEffect","silence","gapCloser"]},
-  {id:"dragon-knight", en:"Dragon Knight", ru:"Рыцарь Дракона", attr:"str", atk:"melee", weak:["physical"], strong:["tankyStr","burstMagic"]},
-  {id:"earth-spirit", en:"Earth Spirit", ru:"Дух Земли", attr:"str", atk:"melee", weak:["immobile"], strong:["gapCloser","longStun"]},
-  {id:"earthshaker", en:"Earthshaker", ru:"Землетряс", attr:"str", atk:"melee", weak:["immobile","channeling"], strong:["longStun","burstMagic","gapCloser"]},
-  {id:"elder-titan", en:"Elder Titan", ru:"Древний Титан", attr:"str", atk:"melee", weak:["immobile"], strong:["longStun","gapCloser"]},
-  {id:"huskar", en:"Huskar", ru:"Хускар", attr:"str", atk:"melee", weak:["magicBurst","squishy"], strong:["sustain","burstPhys"]},
-  {id:"kunkka", en:"Kunkka", ru:"Кунка", attr:"str", atk:"melee", weak:["immobile"], strong:["longStun","aoe","gapCloser"]},
-  {id:"legion-commander", en:"Legion Commander", ru:"Легион Командор", attr:"str", atk:"melee", weak:["immobile","physical"], strong:["gapCloser","burstPhys","longStun"]},
-  {id:"lifestealer", en:"Lifestealer", ru:"Пожиратель Жизней", attr:"str", atk:"melee", weak:["magicBurst"], strong:["spellImmune","sustain","burstPhys"]},
-  {id:"lycan", en:"Lycan", ru:"Ликан", attr:"str", atk:"melee", weak:["summons","physical"], strong:["aoe","burstPhys"]},
-  {id:"magnus", en:"Magnus", ru:"Магнус", attr:"str", atk:"melee", weak:["immobile"], strong:["longStun","aoe","gapCloser"]},
-  {id:"marci", en:"Marci", ru:"Марси", attr:"str", atk:"melee", weak:["immobile"], strong:["gapCloser","sustain","longStun"]},
-  {id:"mars", en:"Mars", ru:"Марс", attr:"str", atk:"melee", weak:["immobile"], strong:["longStun","gapCloser","tankyStr"]},
-  {id:"night-stalker", en:"Night Stalker", ru:"Ночной Сталкер", attr:"str", atk:"melee", weak:["immobile","squishy"], strong:["gapCloser","longStun"]},
-  {id:"ogre-magi", en:"Ogre Magi", ru:"Огр Маги", attr:"str", atk:"melee", weak:["immobile"], strong:["longStun","burstMagic","tankyStr"]},
-  {id:"omniknight", en:"Omniknight", ru:"Омникнайт", attr:"str", atk:"melee", weak:["physical"], strong:["sustain","spellImmune","tankyStr"]},
-  {id:"primal-beast", en:"Primal Beast", ru:"Первородный Зверь", attr:"str", atk:"melee", weak:["immobile"], strong:["longStun","gapCloser","tankyStr"]},
-  {id:"pudge", en:"Pudge", ru:"Пудж", attr:"str", atk:"melee", weak:["channeling","immobile"], strong:["longStun","gapCloser","tankyStr"]},
-  {id:"sand-king", en:"Sand King", ru:"Песчаный Король", attr:"str", atk:"melee", weak:["immobile"], strong:["aoe","longStun","gapCloser"]},
-  {id:"slardar", en:"Slardar", ru:"Слардар", attr:"str", atk:"melee", weak:["immobile"], strong:["detection","armorReduction","gapCloser"]},
-  {id:"spirit-breaker", en:"Spirit Breaker", ru:"Спирит Брейкер", attr:"str", atk:"melee", weak:["immobile"], strong:["gapCloser","longStun"]},
-  {id:"sven", en:"Sven", ru:"Свен", attr:"str", atk:"melee", weak:["physical"], strong:["burstPhys","longStun","tankyStr"]},
-  {id:"tidehunter", en:"Tidehunter", ru:"Тайдхантер", attr:"str", atk:"melee", weak:["immobile"], strong:["aoe","longStun","tankyStr"]},
-  {id:"timbersaw", en:"Timbersaw", ru:"Тимберсо", attr:"str", atk:"melee", weak:["physical"], strong:["burstMagic","tankyStr"]},
-  {id:"tiny", en:"Tiny", ru:"Тайни", attr:"str", atk:"melee", weak:["physical"], strong:["burstMagic","longStun","gapCloser"]},
-  {id:"treant", en:"Treant Protector", ru:"Древень", attr:"str", atk:"melee", weak:["invis","physical"], strong:["sustain","longStun"]},
-  {id:"tusk", en:"Tusk", ru:"Тоск", attr:"str", atk:"melee", weak:["immobile"], strong:["gapCloser","longStun"]},
-  {id:"underlord", en:"Underlord", ru:"Андерлорд", attr:"str", atk:"melee", weak:["immobile"], strong:["aoe","tankyStr","longStun"]},
-  {id:"undying", en:"Undying", ru:"Андайинг", attr:"str", atk:"melee", weak:["physical"], strong:["tankyStr","sustain","breakEffect"]},
-  {id:"wraith-king", en:"Wraith King", ru:"Король-Призрак", attr:"str", atk:"melee", weak:["physical"], strong:["tankyStr","longStun"]},
-  {id:"abaddon", en:"Abaddon", ru:"Абаддон", attr:"str", atk:"melee", weak:["physical"], strong:["sustain","tankyStr"]},
-  {id:"alchemist", en:"Alchemist", ru:"Алхимик", attr:"str", atk:"melee", weak:["physical"], strong:["burstPhys","tankyStr","sustain"]},
-  {id:"beastmaster", en:"Beastmaster", ru:"Бистмастер", attr:"str", atk:"melee", weak:["summons"], strong:["aoe","longStun","gapCloser"]},
-  {id:"brewmaster", en:"Brewmaster", ru:"Бруммастер", attr:"str", atk:"melee", weak:["channeling","immobile"], strong:["aoe","longStun","spellImmune"]},
-  {id:"bloodseeker", en:"Bloodseeker", ru:"Кровочерп", attr:"agi", atk:"melee", weak:["immobile","physical"], strong:["gapCloser","burstPhys","antiPoke"]},
+  {id:"anti-mage", en:"Anti-Mage", attr:"agi", atk:"melee", weak:["physical","immobile"], strong:["spellImmune","burstPhys","gapCloser"]},
+  {id:"axe", en:"Axe", attr:"str", atk:"melee", weak:["immobile","physical"], strong:["gapCloser","longStun","tankyStr"]},
+  {id:"bristleback", en:"Bristleback", attr:"str", atk:"melee", weak:["physical"], strong:["tankyStr","sustain"]},
+  {id:"centaur", en:"Centaur Warrunner", attr:"str", atk:"melee", weak:["immobile"], strong:["gapCloser","longStun","tankyStr"]},
+  {id:"chaos-knight", en:"Chaos Knight", attr:"str", atk:"melee", weak:["illusion","physical"], strong:["burstPhys","gapCloser","tankyStr"]},
+  {id:"clockwerk", en:"Clockwerk", attr:"str", atk:"melee", weak:["immobile"], strong:["gapCloser","longStun"]},
+  {id:"dawnbreaker", en:"Dawnbreaker", attr:"str", atk:"melee", weak:["physical"], strong:["sustain","burstPhys","tankyStr"]},
+  {id:"doom", en:"Doom", attr:"str", atk:"melee", weak:["immobile"], strong:["breakEffect","silence","gapCloser"]},
+  {id:"dragon-knight", en:"Dragon Knight", attr:"str", atk:"melee", weak:["physical"], strong:["tankyStr","burstMagic"]},
+  {id:"earth-spirit", en:"Earth Spirit", attr:"str", atk:"melee", weak:["immobile"], strong:["gapCloser","longStun"]},
+  {id:"earthshaker", en:"Earthshaker", attr:"str", atk:"melee", weak:["immobile","channeling"], strong:["longStun","burstMagic","gapCloser"]},
+  {id:"elder-titan", en:"Elder Titan", attr:"str", atk:"melee", weak:["immobile"], strong:["longStun","gapCloser"]},
+  {id:"huskar", en:"Huskar", attr:"str", atk:"melee", weak:["magicBurst","squishy"], strong:["sustain","burstPhys"]},
+  {id:"kunkka", en:"Kunkka", attr:"str", atk:"melee", weak:["immobile"], strong:["longStun","aoe","gapCloser"]},
+  {id:"legion-commander", en:"Legion Commander", attr:"str", atk:"melee", weak:["immobile","physical"], strong:["gapCloser","burstPhys","longStun"]},
+  {id:"lifestealer", en:"Lifestealer", attr:"str", atk:"melee", weak:["magicBurst"], strong:["spellImmune","sustain","burstPhys"]},
+  {id:"lycan", en:"Lycan", attr:"str", atk:"melee", weak:["summons","physical"], strong:["aoe","burstPhys"]},
+  {id:"magnus", en:"Magnus", attr:"str", atk:"melee", weak:["immobile"], strong:["longStun","aoe","gapCloser"]},
+  {id:"marci", en:"Marci", attr:"str", atk:"melee", weak:["immobile"], strong:["gapCloser","sustain","longStun"]},
+  {id:"mars", en:"Mars", attr:"str", atk:"melee", weak:["immobile"], strong:["longStun","gapCloser","tankyStr"]},
+  {id:"night-stalker", en:"Night Stalker", attr:"str", atk:"melee", weak:["immobile","squishy"], strong:["gapCloser","longStun"]},
+  {id:"ogre-magi", en:"Ogre Magi", attr:"str", atk:"melee", weak:["immobile"], strong:["longStun","burstMagic","tankyStr"]},
+  {id:"omniknight", en:"Omniknight", attr:"str", atk:"melee", weak:["physical"], strong:["sustain","spellImmune","tankyStr"]},
+  {id:"primal-beast", en:"Primal Beast", attr:"str", atk:"melee", weak:["immobile"], strong:["longStun","gapCloser","tankyStr"]},
+  {id:"pudge", en:"Pudge", attr:"str", atk:"melee", weak:["channeling","immobile"], strong:["longStun","gapCloser","tankyStr"]},
+  {id:"sand-king", en:"Sand King", attr:"str", atk:"melee", weak:["immobile"], strong:["aoe","longStun","gapCloser"]},
+  {id:"slardar", en:"Slardar", attr:"str", atk:"melee", weak:["immobile"], strong:["detection","armorReduction","gapCloser"]},
+  {id:"spirit-breaker", en:"Spirit Breaker", attr:"str", atk:"melee", weak:["immobile"], strong:["gapCloser","longStun"]},
+  {id:"sven", en:"Sven", attr:"str", atk:"melee", weak:["physical"], strong:["burstPhys","longStun","tankyStr"]},
+  {id:"tidehunter", en:"Tidehunter", attr:"str", atk:"melee", weak:["immobile"], strong:["aoe","longStun","tankyStr"]},
+  {id:"timbersaw", en:"Timbersaw", attr:"str", atk:"melee", weak:["physical"], strong:["burstMagic","tankyStr"]},
+  {id:"tiny", en:"Tiny", attr:"str", atk:"melee", weak:["physical"], strong:["burstMagic","longStun","gapCloser"]},
+  {id:"treant", en:"Treant Protector", attr:"str", atk:"melee", weak:["invis","physical"], strong:["sustain","longStun"]},
+  {id:"tusk", en:"Tusk", attr:"str", atk:"melee", weak:["immobile"], strong:["gapCloser","longStun"]},
+  {id:"underlord", en:"Underlord", attr:"str", atk:"melee", weak:["immobile"], strong:["aoe","tankyStr","longStun"]},
+  {id:"undying", en:"Undying", attr:"str", atk:"melee", weak:["physical"], strong:["tankyStr","sustain","breakEffect"]},
+  {id:"wraith-king", en:"Wraith King", attr:"str", atk:"melee", weak:["physical"], strong:["tankyStr","longStun"]},
+  {id:"abaddon", en:"Abaddon", attr:"str", atk:"melee", weak:["physical"], strong:["sustain","tankyStr"]},
+  {id:"alchemist", en:"Alchemist", attr:"str", atk:"melee", weak:["physical"], strong:["burstPhys","tankyStr","sustain"]},
+  {id:"beastmaster", en:"Beastmaster", attr:"str", atk:"melee", weak:["summons"], strong:["aoe","longStun","gapCloser"]},
+  {id:"brewmaster", en:"Brewmaster", attr:"str", atk:"melee", weak:["channeling","immobile"], strong:["aoe","longStun","spellImmune"]},
+  {id:"bloodseeker", en:"Bloodseeker", attr:"agi", atk:"melee", weak:["immobile","physical"], strong:["gapCloser","burstPhys","antiPoke"]},
 
   // AGILITY
-  {id:"arc-warden", en:"Arc Warden", ru:"Дуговой Страж", attr:"agi", atk:"ranged", weak:["squishy","physical"], strong:["burstMagic"]},
-  {id:"bounty-hunter", en:"Bounty Hunter", ru:"Охотник за головами", attr:"agi", atk:"melee", weak:["invis","squishy"], strong:["detection","burstPhys","gapCloser"]},
-  {id:"broodmother", en:"Broodmother", ru:"Мать выводка", attr:"agi", atk:"melee", weak:["summons","squishy"], strong:["aoe"]},
-  {id:"clinkz", en:"Clinkz", ru:"Клинкз", attr:"agi", atk:"ranged", weak:["invis","squishy"], strong:["detection","burstPhys"]},
-  {id:"drow-ranger", en:"Drow Ranger", ru:"Дроу Рейнджер", attr:"agi", atk:"ranged", weak:["squishy","physical","immobile"], strong:["burstPhys","gapCloser"]},
-  {id:"ember-spirit", en:"Ember Spirit", ru:"Дух Огня", attr:"agi", atk:"melee", weak:["squishy"], strong:["gapCloser","burstMagic"]},
-  {id:"faceless-void", en:"Faceless Void", ru:"Безликая Пустота", attr:"agi", atk:"melee", weak:["physical","channeling"], strong:["burstPhys","longStun","spellImmune"]},
-  {id:"gyrocopter", en:"Gyrocopter", ru:"Гирокоптер", attr:"agi", atk:"ranged", weak:["squishy"], strong:["aoe","burstPhys"]},
-  {id:"hoodwink", en:"Hoodwink", ru:"Хадвинк", attr:"agi", atk:"ranged", weak:["squishy","channeling"], strong:["longStun","burstPhys"]},
-  {id:"juggernaut", en:"Juggernaut", ru:"Джаггернаут", attr:"agi", atk:"melee", weak:["physical"], strong:["spellImmune","burstPhys","evasion"]},
-  {id:"luna", en:"Luna", ru:"Луна", attr:"agi", atk:"ranged", weak:["squishy","physical"], strong:["aoe","burstPhys"]},
-  {id:"medusa", en:"Medusa", ru:"Медуза", attr:"agi", atk:"ranged", weak:["physical","immobile"], strong:["tankyStr","antiPoke","evasion"]},
-  {id:"meepo", en:"Meepo", ru:"Мипо", attr:"agi", atk:"melee", weak:["squishy","aoe"], strong:["burstPhys","gapCloser"]},
-  {id:"mirana", en:"Mirana", ru:"Мирана", attr:"agi", atk:"ranged", weak:["squishy","channeling"], strong:["longStun","gapCloser","burstPhys"]},
-  {id:"monkey-king", en:"Monkey King", ru:"Царь Обезьян", attr:"agi", atk:"melee", weak:["squishy"], strong:["gapCloser","burstPhys","longStun"]},
-  {id:"naga-siren", en:"Naga Siren", ru:"Нага Сирена", attr:"agi", atk:"melee", weak:["illusion"], strong:["aoe","longStun","antiPoke"]},
-  {id:"morphling", en:"Morphling", ru:"Морфлинг", attr:"agi", atk:"ranged", weak:["squishy"], strong:["spellImmune","burstPhys","antiPoke"]},
-  {id:"pangolier", en:"Pangolier", ru:"Панголье", attr:"agi", atk:"melee", weak:["squishy"], strong:["gapCloser","spellImmune","longStun"]},
-  {id:"phantom-assassin", en:"Phantom Assassin", ru:"Фантом Ассассин", attr:"agi", atk:"melee", weak:["physical","immobile"], strong:["burstPhys","trueStrike"]},
-  {id:"phantom-lancer", en:"Phantom Lancer", ru:"Фантом Лансер", attr:"agi", atk:"melee", weak:["illusion"], strong:["aoe","antiPoke"]},
-  {id:"razor", en:"Razor", ru:"Бритва", attr:"agi", atk:"ranged", weak:["squishy"], strong:["antiPoke","burstPhys"]},
-  {id:"riki", en:"Riki", ru:"Рики", attr:"agi", atk:"melee", weak:["invis","physical"], strong:["detection","burstPhys"]},
-  {id:"shadow-fiend", en:"Shadow Fiend", ru:"Ночной Дьявол", attr:"agi", atk:"ranged", weak:["squishy","immobile"], strong:["burstMagic","gapCloser"]},
-  {id:"slark", en:"Slark", ru:"Сларк", attr:"agi", atk:"melee", weak:["invis","physical"], strong:["detection","burstPhys","gapCloser"]},
-  {id:"spectre", en:"Spectre", ru:"Спектр", attr:"agi", atk:"melee", weak:["illusion"], strong:["aoe","tankyStr","burstPhys"]},
-  {id:"templar-assassin", en:"Templar Assassin", ru:"Тамплиер-Ассассин", attr:"agi", atk:"melee", weak:["squishy"], strong:["burstPhys","trueStrike"]},
-  {id:"terrorblade", en:"Terrorblade", ru:"Ужас клинков", attr:"agi", atk:"ranged", weak:["illusion","physical"], strong:["aoe","burstPhys"]},
-  {id:"troll-warlord", en:"Troll Warlord", ru:"Тролль-Военачальник", attr:"agi", atk:"melee", weak:["physical"], strong:["burstPhys","breakEffect"]},
-  {id:"ursa", en:"Ursa", ru:"Урса", attr:"agi", atk:"melee", weak:["immobile","physical"], strong:["burstPhys","gapCloser","breakEffect"]},
-  {id:"vengeful-spirit", en:"Vengeful Spirit", ru:"Мстительный Дух", attr:"agi", atk:"ranged", weak:["squishy"], strong:["armorReduction","gapCloser"]},
-  {id:"venomancer", en:"Venomancer", ru:"Веномансер", attr:"agi", atk:"ranged", weak:["squishy"], strong:["aoe","antiPoke"]},
-  {id:"viper", en:"Viper", ru:"Гадюка", attr:"agi", atk:"ranged", weak:["squishy","immobile"], strong:["antiPoke","gapCloser","burstPhys"]},
-  {id:"weaver", en:"Weaver", ru:"Ткач", attr:"agi", atk:"ranged", weak:["invis","squishy"], strong:["detection","antiPoke"]},
+  {id:"arc-warden", en:"Arc Warden", attr:"agi", atk:"ranged", weak:["squishy","physical"], strong:["burstMagic"]},
+  {id:"bounty-hunter", en:"Bounty Hunter", attr:"agi", atk:"melee", weak:["invis","squishy"], strong:["detection","burstPhys","gapCloser"]},
+  {id:"broodmother", en:"Broodmother", attr:"agi", atk:"melee", weak:["summons","squishy"], strong:["aoe"]},
+  {id:"clinkz", en:"Clinkz", attr:"agi", atk:"ranged", weak:["invis","squishy"], strong:["detection","burstPhys"]},
+  {id:"drow-ranger", en:"Drow Ranger", attr:"agi", atk:"ranged", weak:["squishy","physical","immobile"], strong:["burstPhys","gapCloser"]},
+  {id:"ember-spirit", en:"Ember Spirit", attr:"agi", atk:"melee", weak:["squishy"], strong:["gapCloser","burstMagic"]},
+  {id:"faceless-void", en:"Faceless Void", attr:"agi", atk:"melee", weak:["physical","channeling"], strong:["burstPhys","longStun","spellImmune"]},
+  {id:"gyrocopter", en:"Gyrocopter", attr:"agi", atk:"ranged", weak:["squishy"], strong:["aoe","burstPhys"]},
+  {id:"hoodwink", en:"Hoodwink", attr:"agi", atk:"ranged", weak:["squishy","channeling"], strong:["longStun","burstPhys"]},
+  {id:"juggernaut", en:"Juggernaut", attr:"agi", atk:"melee", weak:["physical"], strong:["spellImmune","burstPhys","evasion"]},
+  {id:"luna", en:"Luna", attr:"agi", atk:"ranged", weak:["squishy","physical"], strong:["aoe","burstPhys"]},
+  {id:"medusa", en:"Medusa", attr:"agi", atk:"ranged", weak:["physical","immobile"], strong:["tankyStr","antiPoke","evasion"]},
+  {id:"meepo", en:"Meepo", attr:"agi", atk:"melee", weak:["squishy","aoe"], strong:["burstPhys","gapCloser"]},
+  {id:"mirana", en:"Mirana", attr:"agi", atk:"ranged", weak:["squishy","channeling"], strong:["longStun","gapCloser","burstPhys"]},
+  {id:"monkey-king", en:"Monkey King", attr:"agi", atk:"melee", weak:["squishy"], strong:["gapCloser","burstPhys","longStun"]},
+  {id:"naga-siren", en:"Naga Siren", attr:"agi", atk:"melee", weak:["illusion"], strong:["aoe","longStun","antiPoke"]},
+  {id:"morphling", en:"Morphling", attr:"agi", atk:"ranged", weak:["squishy"], strong:["spellImmune","burstPhys","antiPoke"]},
+  {id:"pangolier", en:"Pangolier", attr:"agi", atk:"melee", weak:["squishy"], strong:["gapCloser","spellImmune","longStun"]},
+  {id:"phantom-assassin", en:"Phantom Assassin", attr:"agi", atk:"melee", weak:["physical","immobile"], strong:["burstPhys","trueStrike"]},
+  {id:"phantom-lancer", en:"Phantom Lancer", attr:"agi", atk:"melee", weak:["illusion"], strong:["aoe","antiPoke"]},
+  {id:"razor", en:"Razor", attr:"agi", atk:"ranged", weak:["squishy"], strong:["antiPoke","burstPhys"]},
+  {id:"riki", en:"Riki", attr:"agi", atk:"melee", weak:["invis","physical"], strong:["detection","burstPhys"]},
+  {id:"shadow-fiend", en:"Shadow Fiend", attr:"agi", atk:"ranged", weak:["squishy","immobile"], strong:["burstMagic","gapCloser"]},
+  {id:"slark", en:"Slark", attr:"agi", atk:"melee", weak:["invis","physical"], strong:["detection","burstPhys","gapCloser"]},
+  {id:"spectre", en:"Spectre", attr:"agi", atk:"melee", weak:["illusion"], strong:["aoe","tankyStr","burstPhys"]},
+  {id:"templar-assassin", en:"Templar Assassin", attr:"agi", atk:"melee", weak:["squishy"], strong:["burstPhys","trueStrike"]},
+  {id:"terrorblade", en:"Terrorblade", attr:"agi", atk:"ranged", weak:["illusion","physical"], strong:["aoe","burstPhys"]},
+  {id:"troll-warlord", en:"Troll Warlord", attr:"agi", atk:"melee", weak:["physical"], strong:["burstPhys","breakEffect"]},
+  {id:"ursa", en:"Ursa", attr:"agi", atk:"melee", weak:["immobile","physical"], strong:["burstPhys","gapCloser","breakEffect"]},
+  {id:"vengeful-spirit", en:"Vengeful Spirit", attr:"agi", atk:"ranged", weak:["squishy"], strong:["armorReduction","gapCloser"]},
+  {id:"venomancer", en:"Venomancer", attr:"agi", atk:"ranged", weak:["squishy"], strong:["aoe","antiPoke"]},
+  {id:"viper", en:"Viper", attr:"agi", atk:"ranged", weak:["squishy","immobile"], strong:["antiPoke","gapCloser","burstPhys"]},
+  {id:"weaver", en:"Weaver", attr:"agi", atk:"ranged", weak:["invis","squishy"], strong:["detection","antiPoke"]},
 
   // INTELLIGENCE
-  {id:"ancient-apparition", en:"Ancient Apparition", ru:"Древнее Видение", attr:"int", atk:"ranged", weak:["squishy","immobile"], strong:["burstMagic","antiPoke"]},
-  {id:"bane", en:"Bane", ru:"Бейн", attr:"int", atk:"ranged", weak:["squishy","immobile"], strong:["silence","longStun"]},
-  {id:"batrider", en:"Batrider", ru:"Батрайдер", attr:"int", atk:"melee", weak:["squishy"], strong:["gapCloser","longStun"]},
-  {id:"chen", en:"Chen", ru:"Чен", attr:"int", atk:"ranged", weak:["summons","squishy"], strong:["sustain"]},
-  {id:"crystal-maiden", en:"Crystal Maiden", ru:"Ледяная Дева", attr:"int", atk:"ranged", weak:["squishy","immobile"], strong:["longStun","aoe"]},
-  {id:"dark-seer", en:"Dark Seer", ru:"Тёмный Провидец", attr:"int", atk:"melee", weak:["squishy"], strong:["aoe","gapCloser"]},
-  {id:"dark-willow", en:"Dark Willow", ru:"Тёмная Ива", attr:"int", atk:"ranged", weak:["squishy"], strong:["silence","longStun"]},
-  {id:"dazzle", en:"Dazzle", ru:"Даззл", attr:"int", atk:"ranged", weak:["squishy"], strong:["sustain","breakEffect"]},
-  {id:"death-prophet", en:"Death Prophet", ru:"Пророчица Смерти", attr:"int", atk:"ranged", weak:["summons"], strong:["antiPoke","aoe"]},
-  {id:"disruptor", en:"Disruptor", ru:"Дизраптор", attr:"int", atk:"ranged", weak:["squishy","immobile"], strong:["silence","longStun"]},
-  {id:"enchantress", en:"Enchantress", ru:"Чародейка", attr:"int", atk:"ranged", weak:["squishy"], strong:["sustain","antiPoke"]},
-  {id:"enigma", en:"Enigma", ru:"Энигма", attr:"int", atk:"melee", weak:["channeling","squishy"], strong:["aoe","longStun"]},
-  {id:"grimstroke", en:"Grimstroke", ru:"Гримстроук", attr:"int", atk:"ranged", weak:["squishy","immobile"], strong:["silence","longStun"]},
-  {id:"invoker", en:"Invoker", ru:"Инвокер", attr:"int", atk:"ranged", weak:["squishy","activeReliant"], strong:["burstMagic","longStun"]},
-  {id:"jakiro", en:"Jakiro", ru:"Джакиро", attr:"int", atk:"ranged", weak:["squishy","immobile"], strong:["aoe","longStun"]},
-  {id:"keeper-of-the-light", en:"Keeper of the Light", ru:"Хранитель Света", attr:"int", atk:"ranged", weak:["squishy","immobile"], strong:["burstMagic","aoe"]},
-  {id:"leshrac", en:"Leshrac", ru:"Лешрак", attr:"int", atk:"ranged", weak:["squishy"], strong:["burstMagic","aoe"]},
-  {id:"lich", en:"Lich", ru:"Лич", attr:"int", atk:"ranged", weak:["squishy","immobile"], strong:["aoe","antiPoke"]},
-  {id:"lina", en:"Lina", ru:"Лина", attr:"int", atk:"ranged", weak:["squishy","immobile"], strong:["burstMagic","longStun"]},
-  {id:"lion", en:"Lion", ru:"Лион", attr:"int", atk:"ranged", weak:["squishy","immobile"], strong:["silence","longStun","burstMagic"]},
-  {id:"warlock", en:"Warlock", ru:"Ворлок", attr:"int", atk:"ranged", weak:["squishy","immobile"], strong:["longStun","sustain"]},
-  {id:"muerta", en:"Muerta", ru:"Муэрта", attr:"agi", atk:"ranged", weak:["squishy"], strong:["burstMagic","detection"]},
-  {id:"nature-prophet", en:"Nature's Prophet", ru:"Пророк Природы", attr:"int", atk:"ranged", weak:["summons"], strong:["aoe","antiPoke"]},
-  {id:"necrophos", en:"Necrophos", ru:"Некрофос", attr:"int", atk:"ranged", weak:["squishy"], strong:["breakEffect","tankyStr","antiPoke"]},
-  {id:"oracle", en:"Oracle", ru:"Оракул", attr:"int", atk:"ranged", weak:["squishy","immobile"], strong:["sustain","spellImmune"]},
-  {id:"outworld-destroyer", en:"Outworld Destroyer", ru:"Разрушитель Иного Мира", attr:"int", atk:"ranged", weak:["squishy"], strong:["burstMagic","silence"]},
-  {id:"puck", en:"Puck", ru:"Пак", attr:"int", atk:"ranged", weak:["squishy"], strong:["gapCloser","burstMagic"]},
-  {id:"pugna", en:"Pugna", ru:"Пугна", attr:"int", atk:"ranged", weak:["squishy","immobile"], strong:["burstMagic","antiPoke"]},
-  {id:"queen-of-pain", en:"Queen of Pain", ru:"Королева Боли", attr:"int", atk:"ranged", weak:["squishy"], strong:["burstMagic","gapCloser"]},
-  {id:"rubick", en:"Rubick", ru:"Рубик", attr:"int", atk:"ranged", weak:["squishy","immobile"], strong:["silence","longStun"]},
-  {id:"shadow-demon", en:"Shadow Demon", ru:"Демон Тени", attr:"int", atk:"ranged", weak:["squishy","immobile"], strong:["silence","longStun"]},
-  {id:"shadow-shaman", en:"Shadow Shaman", ru:"Шаман Тени", attr:"int", atk:"ranged", weak:["squishy","immobile","summons"], strong:["longStun","aoe"]},
-  {id:"silencer", en:"Silencer", ru:"Молчун", attr:"int", atk:"ranged", weak:["squishy"], strong:["silence","antiPoke"]},
-  {id:"skywrath-mage", en:"Skywrath Mage", ru:"Небесный Маг", attr:"int", atk:"ranged", weak:["squishy","immobile"], strong:["silence","burstMagic"]},
-  {id:"storm-spirit", en:"Storm Spirit", ru:"Дух Бури", attr:"int", atk:"melee", weak:["activeReliant","squishy"], strong:["gapCloser","spellImmune"]},
-  {id:"tinker", en:"Tinker", ru:"Тинкер", attr:"int", atk:"ranged", weak:["squishy","activeReliant","immobile"], strong:["burstMagic"]},
-  {id:"visage", en:"Visage", ru:"Визаж", attr:"int", atk:"ranged", weak:["summons"], strong:["aoe","tankyStr"]},
-  {id:"void-spirit", en:"Void Spirit", ru:"Дух Пустоты", attr:"int", atk:"melee", weak:["squishy"], strong:["gapCloser","burstMagic","silence"]},
-  {id:"windranger", en:"Windranger", ru:"Виндраннер", attr:"int", atk:"ranged", weak:["squishy"], strong:["silence","longStun"]},
-  {id:"winter-wyvern", en:"Winter Wyvern", ru:"Зимний Виверн", attr:"int", atk:"ranged", weak:["squishy","immobile"], strong:["sustain","spellImmune"]},
-  {id:"witch-doctor", en:"Witch Doctor", ru:"Знахарь", attr:"int", atk:"ranged", weak:["squishy","immobile","channeling"], strong:["longStun","aoe"]},
-  {id:"zeus", en:"Zeus", ru:"Зевс", attr:"int", atk:"ranged", weak:["squishy"], strong:["burstMagic","aoe"]},
+  {id:"ancient-apparition", en:"Ancient Apparition", attr:"int", atk:"ranged", weak:["squishy","immobile"], strong:["burstMagic","antiPoke"]},
+  {id:"bane", en:"Bane", attr:"int", atk:"ranged", weak:["squishy","immobile"], strong:["silence","longStun"]},
+  {id:"batrider", en:"Batrider", attr:"int", atk:"melee", weak:["squishy"], strong:["gapCloser","longStun"]},
+  {id:"chen", en:"Chen", attr:"int", atk:"ranged", weak:["summons","squishy"], strong:["sustain"]},
+  {id:"crystal-maiden", en:"Crystal Maiden", attr:"int", atk:"ranged", weak:["squishy","immobile"], strong:["longStun","aoe"]},
+  {id:"dark-seer", en:"Dark Seer", attr:"int", atk:"melee", weak:["squishy"], strong:["aoe","gapCloser"]},
+  {id:"dark-willow", en:"Dark Willow", attr:"int", atk:"ranged", weak:["squishy"], strong:["silence","longStun"]},
+  {id:"dazzle", en:"Dazzle", attr:"int", atk:"ranged", weak:["squishy"], strong:["sustain","breakEffect"]},
+  {id:"death-prophet", en:"Death Prophet", attr:"int", atk:"ranged", weak:["summons"], strong:["antiPoke","aoe"]},
+  {id:"disruptor", en:"Disruptor", attr:"int", atk:"ranged", weak:["squishy","immobile"], strong:["silence","longStun"]},
+  {id:"enchantress", en:"Enchantress", attr:"int", atk:"ranged", weak:["squishy"], strong:["sustain","antiPoke"]},
+  {id:"enigma", en:"Enigma", attr:"int", atk:"melee", weak:["channeling","squishy"], strong:["aoe","longStun"]},
+  {id:"grimstroke", en:"Grimstroke", attr:"int", atk:"ranged", weak:["squishy","immobile"], strong:["silence","longStun"]},
+  {id:"invoker", en:"Invoker", attr:"int", atk:"ranged", weak:["squishy","activeReliant"], strong:["burstMagic","longStun"]},
+  {id:"jakiro", en:"Jakiro", attr:"int", atk:"ranged", weak:["squishy","immobile"], strong:["aoe","longStun"]},
+  {id:"keeper-of-the-light", en:"Keeper of the Light", attr:"int", atk:"ranged", weak:["squishy","immobile"], strong:["burstMagic","aoe"]},
+  {id:"leshrac", en:"Leshrac", attr:"int", atk:"ranged", weak:["squishy"], strong:["burstMagic","aoe"]},
+  {id:"lich", en:"Lich", attr:"int", atk:"ranged", weak:["squishy","immobile"], strong:["aoe","antiPoke"]},
+  {id:"lina", en:"Lina", attr:"int", atk:"ranged", weak:["squishy","immobile"], strong:["burstMagic","longStun"]},
+  {id:"lion", en:"Lion", attr:"int", atk:"ranged", weak:["squishy","immobile"], strong:["silence","longStun","burstMagic"]},
+  {id:"warlock", en:"Warlock", attr:"int", atk:"ranged", weak:["squishy","immobile"], strong:["longStun","sustain"]},
+  {id:"muerta", en:"Muerta", attr:"agi", atk:"ranged", weak:["squishy"], strong:["burstMagic","detection"]},
+  {id:"nature-prophet", en:"Nature's Prophet", attr:"int", atk:"ranged", weak:["summons"], strong:["aoe","antiPoke"]},
+  {id:"necrophos", en:"Necrophos", attr:"int", atk:"ranged", weak:["squishy"], strong:["breakEffect","tankyStr","antiPoke"]},
+  {id:"oracle", en:"Oracle", attr:"int", atk:"ranged", weak:["squishy","immobile"], strong:["sustain","spellImmune"]},
+  {id:"outworld-destroyer", en:"Outworld Destroyer", attr:"int", atk:"ranged", weak:["squishy"], strong:["burstMagic","silence"]},
+  {id:"puck", en:"Puck", attr:"int", atk:"ranged", weak:["squishy"], strong:["gapCloser","burstMagic"]},
+  {id:"pugna", en:"Pugna", attr:"int", atk:"ranged", weak:["squishy","immobile"], strong:["burstMagic","antiPoke"]},
+  {id:"queen-of-pain", en:"Queen of Pain", attr:"int", atk:"ranged", weak:["squishy"], strong:["burstMagic","gapCloser"]},
+  {id:"rubick", en:"Rubick", attr:"int", atk:"ranged", weak:["squishy","immobile"], strong:["silence","longStun"]},
+  {id:"shadow-demon", en:"Shadow Demon", attr:"int", atk:"ranged", weak:["squishy","immobile"], strong:["silence","longStun"]},
+  {id:"shadow-shaman", en:"Shadow Shaman", attr:"int", atk:"ranged", weak:["squishy","immobile","summons"], strong:["longStun","aoe"]},
+  {id:"silencer", en:"Silencer", attr:"int", atk:"ranged", weak:["squishy"], strong:["silence","antiPoke"]},
+  {id:"skywrath-mage", en:"Skywrath Mage", attr:"int", atk:"ranged", weak:["squishy","immobile"], strong:["silence","burstMagic"]},
+  {id:"storm-spirit", en:"Storm Spirit", attr:"int", atk:"melee", weak:["activeReliant","squishy"], strong:["gapCloser","spellImmune"]},
+  {id:"tinker", en:"Tinker", attr:"int", atk:"ranged", weak:["squishy","activeReliant","immobile"], strong:["burstMagic"]},
+  {id:"visage", en:"Visage", attr:"int", atk:"ranged", weak:["summons"], strong:["aoe","tankyStr"]},
+  {id:"void-spirit", en:"Void Spirit", attr:"int", atk:"melee", weak:["squishy"], strong:["gapCloser","burstMagic","silence"]},
+  {id:"windranger", en:"Windranger", attr:"int", atk:"ranged", weak:["squishy"], strong:["silence","longStun"]},
+  {id:"winter-wyvern", en:"Winter Wyvern", attr:"int", atk:"ranged", weak:["squishy","immobile"], strong:["sustain","spellImmune"]},
+  {id:"witch-doctor", en:"Witch Doctor", attr:"int", atk:"ranged", weak:["squishy","immobile","channeling"], strong:["longStun","aoe"]},
+  {id:"zeus", en:"Zeus", attr:"int", atk:"ranged", weak:["squishy"], strong:["burstMagic","aoe"]},
 
   // UNIVERSAL / OTHERS
-  {id:"io", en:"Io", ru:"Ио", attr:"all", atk:"ranged", weak:["squishy"], strong:["sustain","gapCloser"]},
-  {id:"nyx-assassin", en:"Nyx Assassin", ru:"Никс Ассассин", attr:"all", atk:"melee", weak:["invis"], strong:["silence","detection","burstMagic"]},
-  {id:"snapfire", en:"Snapfire", ru:"Снэпфаер", attr:"all", atk:"ranged", weak:["squishy"], strong:["longStun","burstMagic"]},
-  {id:"techies", en:"Techies", ru:"Техиз", attr:"all", atk:"ranged", weak:["squishy","immobile"], strong:["burstMagic","longStun"]},
-  {id:"sniper", en:"Sniper", ru:"Снайпер", attr:"agi", atk:"ranged", weak:["squishy","immobile"], strong:["antiPoke","burstPhys"]}
+  {id:"io", en:"Io", attr:"all", atk:"ranged", weak:["squishy"], strong:["sustain","gapCloser"]},
+  {id:"nyx-assassin", en:"Nyx Assassin", attr:"all", atk:"melee", weak:["invis"], strong:["silence","detection","burstMagic"]},
+  {id:"snapfire", en:"Snapfire", attr:"all", atk:"ranged", weak:["squishy"], strong:["longStun","burstMagic"]},
+  {id:"techies", en:"Techies", attr:"all", atk:"ranged", weak:["squishy","immobile"], strong:["burstMagic","longStun"]},
+  {id:"sniper", en:"Sniper", attr:"agi", atk:"ranged", weak:["squishy","immobile"], strong:["antiPoke","burstPhys"]}
 ];
 
-// Ключевые контрпики "по знаниям меты" — приоритетнее эвристики.
-// Формат: enemyId: [{id, reason}]
+// Hand-picked, meta-informed hard counters — weighted above the heuristic.
+// Format: enemyId: [{id, reason}]
 const CURATED_COUNTERS = {
   "anti-mage": [
-    {id:"axe", reason:"Клич берсерка заставляет Анти-мага драться в ближнем бою, где он слаб"},
-    {id:"legion-commander", reason:"Дуэль и Петля крови убивают Анти-мага до того, как он разгонится"},
-    {id:"night-stalker", reason:"Ночью резко ловит Анти-мага без побега"},
-    {id:"bloodseeker", reason:"Разрыв не даёт заблинковать и убежать"}
+    {id:"axe", reason:"Berserker's Call forces AM into melee range, where he's weak"},
+    {id:"legion-commander", reason:"Duel and Blood Rite kill AM before he can farm a lead"},
+    {id:"night-stalker", reason:"At night he catches AM instantly with no escape"},
+    {id:"bloodseeker", reason:"Rupture stops the Blink Dagger getaway"}
   ],
   "phantom-assassin": [
-    {id:"nyx-assassin", reason:"Сжигание маны и Пронзание ловят Фантом Ассассина сквозь Смаз"},
-    {id:"bristleback", reason:"Много брони и урон, который не зависит от критов"},
-    {id:"lion", reason:"Долгий стан+силенс убивают Фантом Ассассина до крита"},
-    {id:"axe", reason:"Клич гарантированно ловит и заставляет драться"}
+    {id:"nyx-assassin", reason:"Mana Burn and Impale land through Blur"},
+    {id:"bristleback", reason:"High armor and damage that doesn't care about crits"},
+    {id:"lion", reason:"Long stun plus silence kills PA before she can crit"},
+    {id:"axe", reason:"Call guarantees a hit and forces a fight"}
   ],
   "juggernaut": [
-    {id:"axe", reason:"Клич берсерка ловит даже в Клинковый вихрь (не прерывает, но фиксирует после)"},
-    {id:"lion", reason:"Стан+силенс до Всесечения или сразу после"},
-    {id:"bane", reason:"Хватка исчадия убивает сквозь Клинковый вихрь"},
-    {id:"disruptor", reason:"Проблеск отменяет позиционирование к Всесечению"}
+    {id:"axe", reason:"Berserker's Call still locks him down right after Blade Fury ends"},
+    {id:"lion", reason:"Stun and silence land before or right after Omnislash"},
+    {id:"bane", reason:"Fiend's Grip kills through Blade Fury"},
+    {id:"disruptor", reason:"Glimpse resets his positioning before Omnislash"}
   ],
   "riki": [
-    {id:"bounty-hunter", reason:"Слежка и обзор снимают невидимость"},
-    {id:"slardar", reason:"Усиление урона раскрывает Рики"},
-    {id:"nyx-assassin", reason:"Пронзание ловит из вижена, силенс не даёт активок"}
+    {id:"bounty-hunter", reason:"Track and vision strip the invisibility"},
+    {id:"slardar", reason:"Amplify Damage reveals Riki"},
+    {id:"nyx-assassin", reason:"Impale lands off vision, and silence shuts down his tools"}
   ],
   "slark": [
-    {id:"nyx-assassin", reason:"Пронзание и Сжигание маны ловят и обнуляют ману"},
-    {id:"bloodseeker", reason:"Разрыв ловит побег после Прыжка"},
-    {id:"legion-commander", reason:"Дуэль не даёт Сларку выйти из боя"},
-    {id:"axe", reason:"Клич фиксирует в бою"}
+    {id:"nyx-assassin", reason:"Impale and Mana Burn catch him and drain his mana"},
+    {id:"bloodseeker", reason:"Rupture punishes the Pounce escape"},
+    {id:"legion-commander", reason:"Duel won't let Slark disengage"},
+    {id:"axe", reason:"Call locks him into the fight"}
   ],
   "storm-spirit": [
-    {id:"axe", reason:"Клич достаёт при выходе из Шаровая молния"},
-    {id:"bloodseeker", reason:"Жажда крови и Разрыв ловят на переходах"},
-    {id:"silencer", reason:"Глобальное безмолвие обнуляет мобильность Шторма"},
-    {id:"nyx-assassin", reason:"Сжигание маны лишает маны на способности"}
+    {id:"axe", reason:"Call still lands the moment he exits Ball Lightning"},
+    {id:"bloodseeker", reason:"Thirst and Rupture punish him mid-transition"},
+    {id:"silencer", reason:"Global Silence shuts down his mobility entirely"},
+    {id:"nyx-assassin", reason:"Mana Burn drains the mana he needs to move"}
   ],
   "templar-assassin": [
-    {id:"bounty-hunter", reason:"Обзор и Слежка снимают Слияние/невидимость"},
-    {id:"earthshaker", reason:"АОЕ стан ловит несмотря на Рефракция"},
-    {id:"axe", reason:"Клич снимает заряды Рефракция моментально"}
+    {id:"bounty-hunter", reason:"Vision and Track strip Meld/invisibility"},
+    {id:"earthshaker", reason:"AOE stun lands despite Refraction charges"},
+    {id:"axe", reason:"Call instantly burns all Refraction charges"}
   ],
   "medusa": [
-    {id:"silencer", reason:"Глобальное безмолвие не даёт использовать Веерный выстрел/Каменный взгляд"},
-    {id:"doom", reason:"Дум режет пассивки и не даёт кастовать"},
-    {id:"bloodseeker", reason:"Разрыв обходит Щит маны по механике позиционирования"}
+    {id:"silencer", reason:"Global Silence disables Split Shot and Stone Gaze"},
+    {id:"doom", reason:"Doom breaks her passives and blocks her spells entirely"},
+    {id:"bloodseeker", reason:"Rupture punishes repositioning around Mana Shield"}
   ],
   "spectre": [
-    {id:"axe", reason:"Прерывает фарм иллюзий давлением, Клич фиксирует"},
-    {id:"phantom-lancer", reason:"У Спектр слаб пуш на линии от иллюзий ПЛ"},
-    {id:"bloodseeker", reason:"Разрыв убивает даже сквозь Рассеивание"}
+    {id:"axe", reason:"Pressures her illusion farm and Call locks her down"},
+    {id:"phantom-lancer", reason:"Spectre struggles to hold lanes against PL's illusions"},
+    {id:"bloodseeker", reason:"Rupture kills even through Dispersion"}
   ],
   "faceless-void": [
-    {id:"silencer", reason:"Не даёт войти в Хроносферу со способностями"},
-    {id:"disruptor", reason:"Проблеск и Статический шторм снимают преимущество тайминга"},
-    {id:"morphling", reason:"Иммунитет к магии игнорирует контроль в Хроне"}
+    {id:"silencer", reason:"Prevents ability use inside Chronosphere"},
+    {id:"disruptor", reason:"Glimpse and Static Storm undercut his timing advantage"},
+    {id:"morphling", reason:"Spell immunity ignores control inside Chrono"}
   ],
   "terrorblade": [
-    {id:"axe", reason:"Убивает иллюзии и давит на линии"},
-    {id:"necrophos", reason:"Коса жнеца добивает по проценту здоровья"},
-    {id:"doom", reason:"Брейк снимает эффекты Метаморфозы"}
+    {id:"axe", reason:"Clears illusions and pressures the lane"},
+    {id:"necrophos", reason:"Reaper's Scythe finishes based on percentage health"},
+    {id:"doom", reason:"Break removes Metamorphosis's benefits"}
   ],
   "invoker": [
-    {id:"silencer", reason:"Глобальное безмолвие полностью выключает комбо"},
-    {id:"nyx-assassin", reason:"Сжигание маны лишает маны на комбо-каст"},
-    {id:"axe", reason:"Быстрая инициация не даёт откастовать"}
+    {id:"silencer", reason:"Global Silence completely shuts down his combo"},
+    {id:"nyx-assassin", reason:"Mana Burn drains the mana needed for a combo cast"},
+    {id:"axe", reason:"Fast initiation doesn't give him time to cast"}
   ],
   "tinker": [
-    {id:"silencer", reason:"Силенс и обнуление активок ломают ротацию"},
-    {id:"nyx-assassin", reason:"Сжигание маны выжигает ману на телепорты"},
-    {id:"anti-mage", reason:"Разрушение маны истощает ману, а рывок догоняет"}
+    {id:"silencer", reason:"Silence and disabling actives break his rotation"},
+    {id:"nyx-assassin", reason:"Mana Burn drains the mana he needs for Rearm/TP"},
+    {id:"anti-mage", reason:"Mana Break drains his mana, Blink catches him"}
   ],
   "shadow-fiend": [
-    {id:"axe", reason:"Быстрая инициация не даёт откастовать Реквием душ"},
-    {id:"nyx-assassin", reason:"Пронзание и силенс ловят перед Реквием душ"},
-    {id:"bristleback", reason:"Много здоровья и брони против физического урона Ночного Дьявола"}
+    {id:"axe", reason:"Fast initiation denies the Requiem of Souls cast"},
+    {id:"nyx-assassin", reason:"Impale and silence land before Requiem"},
+    {id:"bristleback", reason:"High HP and armor blunt his physical damage"}
   ],
   "puck": [
-    {id:"nyx-assassin", reason:"Пронзание ловит сквозь Смещение фазы"},
-    {id:"lion", reason:"Долгий стан фиксирует эфемерную Пак"}
+    {id:"nyx-assassin", reason:"Impale lands even through Phase Shift"},
+    {id:"lion", reason:"A long stun pins down the elusive Puck"}
   ],
   "morphling": [
-    {id:"viper", reason:"Эфирный яд снимает атрибуты и иммунитет к магии"},
-    {id:"silencer", reason:"Силенс не даёт вафлить и лечиться"},
-    {id:"doom", reason:"Дум запрещает использование способностей"}
+    {id:"viper", reason:"Nethertoxin strips his attributes and spell immunity"},
+    {id:"silencer", reason:"Silence blocks Waveform and self-heal"},
+    {id:"doom", reason:"Doom disables all ability use"}
   ],
   "pudge": [
-    {id:"bloodseeker", reason:"Видит низкое здоровье и добивает Разрыв"},
-    {id:"windranger", reason:"Прицельный огонь убивает быстро"},
-    {id:"silencer", reason:"Не даёт кастовать хук на подходе"}
+    {id:"bloodseeker", reason:"Spots low HP and finishes with Rupture"},
+    {id:"windranger", reason:"Focus Fire kills him fast"},
+    {id:"silencer", reason:"Blocks the Meat Hook as he approaches"}
   ],
   "lifestealer": [
-    {id:"viper", reason:"Эфирный яд отключает иммунитет к магии"},
-    {id:"necrophos", reason:"Коса жнеца добивает по % здоровья несмотря на реген"},
-    {id:"dazzle", reason:"Неглубокая могила не даёт добить, но лечение Лайфа рушится под ним же"}
+    {id:"viper", reason:"Nethertoxin disables spell immunity"},
+    {id:"necrophos", reason:"Reaper's Scythe finishes based on percentage health despite regen"},
+    {id:"dazzle", reason:"Shallow Grave denies the kill, though his healing itself falls under Break"}
   ],
   "bristleback": [
-    {id:"doom", reason:"Брейк убирает Разброс игл и другие пассивки Ежака"},
-    {id:"silencer", reason:"Не даёт разворачиваться спиной корректно через контроль"},
-    {id:"viper", reason:"Эфирный яд режет броню и снимает баффы"}
+    {id:"doom", reason:"Break removes Quill Spray and his other passives"},
+    {id:"silencer", reason:"Control prevents him from turning his back correctly"},
+    {id:"viper", reason:"Nether Toxin shreds armor and strips buffs"}
   ],
   "huskar": [
-    {id:"lion", reason:"Магический бурст добивает низкий запас здоровья Хускара"},
-    {id:"skywrath-mage", reason:"Чистый магический урон убивает несмотря на резист"},
-    {id:"necrophos", reason:"Коса жнеца игнорирует физ. резисты Хускара"}
+    {id:"lion", reason:"Magical burst finishes his low HP pool"},
+    {id:"skywrath-mage", reason:"Pure magic damage kills despite his resistances"},
+    {id:"necrophos", reason:"Reaper's Scythe ignores his physical resistances"}
   ],
   "chaos-knight": [
-    {id:"axe", reason:"АОЕ снимает иллюзии, Клич ловит оригинал"},
-    {id:"necrophos", reason:"Урон по % здоровья не зависит от брони и крита"}
+    {id:"axe", reason:"AOE clears illusions, Call catches the real one"},
+    {id:"necrophos", reason:"Percentage-health damage ignores armor and crit"}
   ],
   "naga-siren": [
-    {id:"axe", reason:"Прерывает фарм иллюзий давлением"},
-    {id:"lion", reason:"Стан не даёт уйти в Песнь сирены вовремя"}
+    {id:"axe", reason:"Pressures her illusion farm"},
+    {id:"lion", reason:"A stun denies the escape into Song of the Siren"}
   ],
   "broodmother": [
-    {id:"bounty-hunter", reason:"Обзор и Слежка снимают невидимость пауков"},
-    {id:"axe", reason:"АОЕ Клинок жатвы добивает пауков и саму Брудмать"}
+    {id:"bounty-hunter", reason:"Vision and Track strip the spiderlings' invisibility"},
+    {id:"axe", reason:"AOE Culling Blade clears spiderlings and Broodmother herself"}
   ],
   "clinkz": [
-    {id:"bounty-hunter", reason:"Слежка снимает невидимость"},
-    {id:"nyx-assassin", reason:"Пронзание ловит из вижена"}
+    {id:"bounty-hunter", reason:"Track strips the invisibility"},
+    {id:"nyx-assassin", reason:"Impale lands off vision"}
   ],
   "weaver": [
-    {id:"bounty-hunter", reason:"Обзор и Слежка ограничивают побег"},
-    {id:"silencer", reason:"Не даёт использовать Сюкути/Отскок во времени эффективно"}
+    {id:"bounty-hunter", reason:"Vision and Track limit his escape"},
+    {id:"silencer", reason:"Blocks Shukuchi and Time Lapse from being effective"}
   ],
   "meepo": [
-    {id:"earthshaker", reason:"Гулкий удар уничтожает всех клонов разом"},
-    {id:"tidehunter", reason:"Опустошение сносит всю пачку меп"},
-    {id:"sand-king", reason:"Эпицентр бьёт по всем клонам"}
+    {id:"earthshaker", reason:"Echo Slam wipes out the whole clone pack at once"},
+    {id:"tidehunter", reason:"Ravage sweeps the entire Meepo swarm"},
+    {id:"sand-king", reason:"Epicenter hits every clone"}
   ],
   "arc-warden": [
-    {id:"axe", reason:"Быстро убивает Стража/клона до разгона"},
-    {id:"bloodseeker", reason:"Разрыв не даёт кайтить клоном"}
+    {id:"axe", reason:"Kills the Warden or its clone quickly before it scales"},
+    {id:"bloodseeker", reason:"Rupture stops kiting with the clone"}
   ],
   "drow-ranger": [
-    {id:"axe", reason:"Клич не даёт стрелять и заставляет драться"},
-    {id:"clockwerk", reason:"Гэпклозер+стан не дают удерживать дистанцию"}
+    {id:"axe", reason:"Call stops the kiting and forces a fight"},
+    {id:"clockwerk", reason:"Gap-close plus stun deny her range advantage"}
   ],
   "sniper": [
-    {id:"axe", reason:"Мгновенная инициация не даёт держать дистанцию"},
-    {id:"clockwerk", reason:"Прыжок в лицо и стан"},
-    {id:"nyx-assassin", reason:"Пронзание из вижена ловит на любой дистанции"}
+    {id:"axe", reason:"Instant initiation denies him range to kite"},
+    {id:"clockwerk", reason:"Jumps in his face and stuns"},
+    {id:"nyx-assassin", reason:"Impale off vision catches him at any range"}
   ],
   "windranger": [
-    {id:"axe", reason:"Быстрая инициация не даёт откастовать Прицельный огонь"},
-    {id:"nyx-assassin", reason:"Сжигание маны и стан ломают комбо"}
+    {id:"axe", reason:"Fast initiation denies the Focus Fire cast"},
+    {id:"nyx-assassin", reason:"Mana Burn and stun break her combo"}
   ],
   "zeus": [
-    {id:"silencer", reason:"Глобальное безмолвие полностью выключает урон"},
-    {id:"nyx-assassin", reason:"Сжигание маны лишает маны на нюки"},
-    {id:"anti-mage", reason:"Щит от заклинаний и Разрушение маны душат Зевса"}
+    {id:"silencer", reason:"Global Silence completely shuts off his damage"},
+    {id:"nyx-assassin", reason:"Mana Burn drains the mana behind his nukes"},
+    {id:"anti-mage", reason:"Spell Shield and Mana Break starve Zeus"}
   ],
   "lina": [
-    {id:"axe", reason:"Быстрая инициация не даёт откастовать комбо"},
-    {id:"nyx-assassin", reason:"Пронзание и силенс ловят до нюков"}
+    {id:"axe", reason:"Fast initiation denies the nuke combo"},
+    {id:"nyx-assassin", reason:"Impale and silence land before her nukes"}
   ],
   "skywrath-mage": [
-    {id:"axe", reason:"Быстрая инициация убивает хрупкого героя"},
-    {id:"nyx-assassin", reason:"Силенс снимает Печать древних и нюки"}
+    {id:"axe", reason:"Fast initiation kills this fragile hero outright"},
+    {id:"nyx-assassin", reason:"Silence removes Ancient Seal and shuts down nukes"}
   ],
   "queen-of-pain": [
-    {id:"nyx-assassin", reason:"Пронзание ловит сквозь блинк"},
-    {id:"axe", reason:"Клич не даёт уйти в блинк"}
+    {id:"nyx-assassin", reason:"Impale lands even through her Blink"},
+    {id:"axe", reason:"Call denies the Blink escape"}
   ],
   "necrophos": [
-    {id:"silencer", reason:"Силенс не даёт откастовать ульт"},
-    {id:"anti-mage", reason:"Щит от заклинаний снижает магический урон, а Разрушение маны истощает ману"}
+    {id:"silencer", reason:"Silence denies the ultimate cast"},
+    {id:"anti-mage", reason:"Spell Shield lowers magic damage, and Mana Break drains his mana"}
   ],
   "enigma": [
-    {id:"silencer", reason:"Не даёт откастовать Чёрную дыру"},
-    {id:"nyx-assassin", reason:"Прерывает ченнелинг ульта станом"},
-    {id:"axe", reason:"Быстрая инициация ловит до Чёрной дыры"}
+    {id:"silencer", reason:"Denies the Black Hole cast"},
+    {id:"nyx-assassin", reason:"A stun interrupts the channeled ultimate"},
+    {id:"axe", reason:"Fast initiation catches him before Black Hole"}
   ],
   "tidehunter": [
-    {id:"silencer", reason:"Не даёт откастовать Опустошение"},
-    {id:"nyx-assassin", reason:"Станит и прерывает подготовку к ульту"}
+    {id:"silencer", reason:"Denies the Ravage cast"},
+    {id:"nyx-assassin", reason:"Stuns and interrupts his ultimate setup"}
   ],
   "magnus": [
-    {id:"silencer", reason:"Не даёт использовать Разворот полярности"},
-    {id:"nyx-assassin", reason:"Ловит до инициации станом"}
+    {id:"silencer", reason:"Denies Reverse Polarity"},
+    {id:"nyx-assassin", reason:"Catches him with a stun before he can initiate"}
   ],
   "earthshaker": [
-    {id:"nyx-assassin", reason:"Прерывает ченнелинг Гулкого удара"},
-    {id:"silencer", reason:"Не даёт откастовать ульт"}
+    {id:"nyx-assassin", reason:"Interrupts the Echo Slam channel"},
+    {id:"silencer", reason:"Denies the ultimate cast"}
   ],
   "witch-doctor": [
-    {id:"nyx-assassin", reason:"Прерывает Дозорного смерти станом"},
-    {id:"axe", reason:"Быстрая инициация до каста"}
+    {id:"nyx-assassin", reason:"A stun interrupts the Death Ward channel"},
+    {id:"axe", reason:"Fast initiation before he can cast"}
   ],
   "shadow-shaman": [
-    {id:"nyx-assassin", reason:"Ловит до серии станов"},
-    {id:"axe", reason:"Быстрая инициация"}
+    {id:"nyx-assassin", reason:"Catches him before his stun chain lands"},
+    {id:"axe", reason:"Fast initiation"}
   ],
   "outworld-destroyer": [
-    {id:"anti-mage", reason:"Щит от заклинаний режет магический урон Разрушителя"},
-    {id:"axe", reason:"Быстрая инициация ловит хрупкого героя"}
+    {id:"anti-mage", reason:"Spell Shield cuts down OD's magic damage"},
+    {id:"axe", reason:"Fast initiation catches this fragile hero"}
   ],
   "leshrac": [
-    {id:"axe", reason:"Быстрая инициация убивает хрупкого героя"},
-    {id:"anti-mage", reason:"Щит от заклинаний снижает магический урон"}
+    {id:"axe", reason:"Fast initiation kills this fragile hero outright"},
+    {id:"anti-mage", reason:"Spell Shield lowers his magic damage"}
   ],
   "pugna": [
-    {id:"axe", reason:"Быстрая инициация не даёт использовать Эфирного стража"},
-    {id:"anti-mage", reason:"Разрушение маны контрит манозависимость"}
+    {id:"axe", reason:"Fast initiation denies the Nether Ward setup"},
+    {id:"anti-mage", reason:"Mana Break punishes his mana dependency"}
   ],
   "death-prophet": [
-    {id:"axe", reason:"Убивает призраков и саму ДП"},
-    {id:"doom", reason:"Брейк снимает Похищение духа"}
+    {id:"axe", reason:"Kills the spirits and Death Prophet herself"},
+    {id:"doom", reason:"Break removes Spirit Siphon's benefit"}
   ],
   "beastmaster": [
-    {id:"axe", reason:"АОЕ убивает призывы"},
-    {id:"doom", reason:"Дум выключает героя из боя"}
+    {id:"axe", reason:"AOE kills off his summons"},
+    {id:"doom", reason:"Doom fully disables him from the fight"}
   ],
   "lycan": [
-    {id:"axe", reason:"АОЕ убивает волков"},
-    {id:"doom", reason:"Дум выключает из боя целиком"}
+    {id:"axe", reason:"AOE kills off the wolves"},
+    {id:"doom", reason:"Doom fully disables him from the fight"}
   ],
   "visage": [
-    {id:"axe", reason:"АОЕ убивает фамильяров"},
+    {id:"axe", reason:"AOE kills off the familiars"}
   ],
   "nature-prophet": [
-    {id:"axe", reason:"Быстро убивает трипсы"},
-    {id:"bounty-hunter", reason:"Слежка находит НП на телепорте"}
+    {id:"axe", reason:"Quickly kills his treants"},
+    {id:"bounty-hunter", reason:"Track finds him after a teleport"}
   ],
   "io": [
-    {id:"nyx-assassin", reason:"Сжигание маны и стан ловят несмотря на Перемещение героя"},
-    {id:"axe", reason:"Клич фиксирует перед Перемещением"}
+    {id:"nyx-assassin", reason:"Mana Burn and a stun catch him despite Relocate"},
+    {id:"axe", reason:"Call locks him down before Relocate"}
   ],
   "dark-willow": [
-    {id:"nyx-assassin", reason:"Силенс не даёт откастовать"},
-    {id:"axe", reason:"Быстрая инициация"}
+    {id:"nyx-assassin", reason:"Silence denies her cast"},
+    {id:"axe", reason:"Fast initiation"}
   ],
   "rubick": [
-    {id:"nyx-assassin", reason:"Силенс не даёт украсть заклинание"},
-    {id:"axe", reason:"Быстрая инициация"}
+    {id:"nyx-assassin", reason:"Silence stops him from stealing a spell"},
+    {id:"axe", reason:"Fast initiation"}
   ],
   "keeper-of-the-light": [
-    {id:"axe", reason:"Быстро убивает хрупкого КОТЛ"},
-    {id:"nyx-assassin", reason:"Сжигание маны лишает маны"}
+    {id:"axe", reason:"Quickly kills this fragile hero"},
+    {id:"nyx-assassin", reason:"Mana Burn drains his mana"}
   ],
   "ancient-apparition": [
-    {id:"axe", reason:"Быстрая инициация до Ледяного снаряда"},
-    {id:"nyx-assassin", reason:"Силенс не даёт откастовать"}
+    {id:"axe", reason:"Fast initiation before he can cast Ice Blast"},
+    {id:"nyx-assassin", reason:"Silence denies his cast"}
   ],
   "batrider": [
-    {id:"silencer", reason:"Не даёт использовать Огненное лассо"},
-    {id:"nyx-assassin", reason:"Прерывает подготовку станом"}
+    {id:"silencer", reason:"Blocks the use of Flaming Lasso"},
+    {id:"nyx-assassin", reason:"A stun interrupts his setup"}
   ],
   "void-spirit": [
-    {id:"nyx-assassin", reason:"Пронзание ловит сквозь Разделение"},
-    {id:"silencer", reason:"Силенс не даёт разгоняться порталами"}
+    {id:"nyx-assassin", reason:"Impale lands even through Dissimilate"},
+    {id:"silencer", reason:"Silence stops him from chaining portals"}
   ]
 };

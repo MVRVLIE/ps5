@@ -1,33 +1,33 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dota 2 — Подбор контрпиков</title>
+<title>Dota 2 — Counter Picker</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 <header class="site-header">
-  <h1>⚔ Подбор контрпиков Dota 2</h1>
-  <p>Выбери героев противника — получишь героев, которые их контрят, и почему.</p>
+  <h1>⚔ Dota 2 Counter Picker</h1>
+  <p>Pick the enemy heroes — get heroes that counter them, and why.</p>
 </header>
 
 <main class="layout">
   <section class="panel picker-panel">
     <div class="panel-head">
-      <h2>Герои противника</h2>
-      <button id="clear-btn" class="ghost-btn">Очистить</button>
+      <h2>Enemy heroes</h2>
+      <button id="clear-btn" class="ghost-btn">Clear</button>
     </div>
 
     <div id="enemy-list" class="enemy-list"></div>
 
     <div class="controls">
-      <input id="search" type="text" placeholder="Поиск героя (рус/eng)…" autocomplete="off">
+      <input id="search" type="text" placeholder="Search hero…" autocomplete="off">
       <div class="attr-filter" data-target="enemy">
-        <button data-attr="all" class="active">Все</button>
-        <button data-attr="str">Сила</button>
-        <button data-attr="agi">Ловк.</button>
-        <button data-attr="int">Инт.</button>
+        <button data-attr="all" class="active">All</button>
+        <button data-attr="str">Str</button>
+        <button data-attr="agi">Agi</button>
+        <button data-attr="int">Int</button>
       </div>
     </div>
 
@@ -36,12 +36,12 @@
 
   <section class="panel result-panel">
     <div class="panel-head">
-      <h2>Рекомендуемые контрпики</h2>
+      <h2>Recommended counters</h2>
       <div class="attr-filter" data-target="pool">
-        <button data-attr="all" class="active">Любой атр.</button>
-        <button data-attr="str">Сила</button>
-        <button data-attr="agi">Ловк.</button>
-        <button data-attr="int">Инт.</button>
+        <button data-attr="all" class="active">Any attr.</button>
+        <button data-attr="str">Str</button>
+        <button data-attr="agi">Agi</button>
+        <button data-attr="int">Int</button>
       </div>
     </div>
     <div id="results" class="results"></div>
@@ -49,7 +49,7 @@
 </main>
 
 <footer class="site-footer">
-  <p>Рекомендации построены на типичных игровых механиках (силенс, детект, брейк, бурст, контроль, живучесть) и известных матч-апах меты. Не является 100% точным анализом винрейтов — используйте как подсказку.</p>
+  <p>Recommendations are based on typical game mechanics (silence, detection, break, burst, control, durability) and known meta matchups. This isn't a 100% accurate win-rate analysis — use it as a drafting hint.</p>
 </footer>
 
 <script src="heroes.js"></script>
