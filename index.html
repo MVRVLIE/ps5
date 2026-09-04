@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>Девятка</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="description" content="Девятка — блок-пазл 9x9. Складывайте фигуры, собирайте линии, квадраты и комбо.">
+<meta name="theme-color" content="#0f1226">
+<link rel="icon" type="image/png" href="assets/favicon.png">
+<link rel="apple-touch-icon" href="assets/icon-512.png">
+<link rel="stylesheet" href="src/styles.css">
+<!-- Yandex Games SDK v2. Локально файл отдаёт dev-сервер (tools/serve.mjs) в виде заглушки. -->
+<script src="/sdk.js"></script>
+</head>
+<body>
+
+<div id="app" class="app">
+
+  <header class="hud" id="hud">
+    <div class="hud__scores">
+      <div class="score">
+        <span class="score__label" data-i18n="hud.score">Счёт</span>
+        <span class="score__value" id="score">0</span>
+      </div>
+      <div class="score score--best">
+        <span class="score__label" data-i18n="hud.best">Рекорд</span>
+        <span class="score__value" id="best">0</span>
+      </div>
+    </div>
+    <div class="hud__actions">
+      <button class="iconbtn" id="btn-sound" type="button" data-i18n-title="hud.sound" title="Звук" aria-label="Звук">
+        <svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path d="M4 9.2h3.4L12.6 5v14L7.4 14.8H4z" fill="currentColor"/>
+          <g class="ico-wave" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round">
+            <path d="M16 9.4a3.6 3.6 0 0 1 0 5.2"/>
+            <path d="M18.7 6.9a7.2 7.2 0 0 1 0 10.2"/>
+          </g>
+          <g class="ico-mute" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round">
+            <path d="M16.4 9.6l4.6 4.8M21 9.6l-4.6 4.8"/>
+          </g>
+        </svg>
+      </button>
+      <button class="iconbtn" id="btn-pause" type="button" data-i18n-title="hud.pause" title="Пауза" aria-label="Пауза">
+        <svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <rect x="7" y="5" width="3.6" height="14" rx="1.6" fill="currentColor"/>
+          <rect x="13.4" y="5" width="3.6" height="14" rx="1.6" fill="currentColor"/>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <div class="stage">
+    <canvas id="board" class="stage__canvas"></canvas>
+    <div class="toast" id="toast" aria-live="polite"></div>
+  </div>
+
+  <div class="overlays" id="overlays">
+
+    <!-- Загрузка -->
+    <section class="screen screen--visible" id="screen-loading">
+      <div class="panel panel--plain">
+        <div class="logo">
+          <span class="logo__mark">9</span>
+          <span class="logo__word" data-i18n="app.title">Девятка</span>
+        </div>
+        <div class="loader"><i></i></div>
+        <p class="muted" data-i18n="loading.text">Загрузка…</p>
+      </div>
+    </section>
+
+    <!-- Главное меню -->
+    <section class="screen" id="screen-menu">
+      <div class="panel">
+        <div class="logo">
+          <span class="logo__mark">9</span>
+          <span class="logo__word" data-i18n="app.title">Девятка</span>
+        </div>
+        <p class="panel__subtitle" data-i18n="app.subtitle">Блок-пазл 9×9</p>
+        <div class="stats">
+          <div class="stats__item">
+            <span class="stats__label" data-i18n="hud.best">Рекорд</span>
+            <b class="stats__value" id="menu-best">0</b>
+          </div>
+          <div class="stats__item">
+            <span class="stats__label" data-i18n="menu.games">Партий</span>
+            <b class="stats__value" id="menu-games">0</b>
+          </div>
+        </div>
+        <div class="actions">
+          <button class="btn btn--primary" id="btn-play" type="button" data-i18n="menu.play">Играть</button>
+          <button class="btn" id="btn-continue" type="button" hidden data-i18n="menu.continue">Продолжить</button>
+          <button class="btn btn--ghost" id="btn-leaders" type="button" data-i18n="menu.leaders">Лидеры</button>
+          <button class="btn btn--ghost" id="btn-howto" type="button" data-i18n="menu.howto">Как играть</button>
+        </div>
+        <div class="langbar" id="langbar"></div>
+      </div>
+    </section>
+
+    <!-- Пауза -->
+    <section class="screen" id="screen-pause">
+      <div class="panel">
+        <h2 class="panel__title" data-i18n="pause.title">Пауза</h2>
+        <div class="actions">
+          <button class="btn btn--primary" id="btn-resume" type="button" data-i18n="pause.resume">Продолжить</button>
+          <button class="btn btn--ghost" id="btn-restart" type="button" data-i18n="pause.restart">Начать заново</button>
+          <button class="btn btn--ghost" id="btn-tomenu" type="button" data-i18n="pause.menu">В меню</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Конец игры -->
+    <section class="screen" id="screen-gameover">
+      <div class="panel">
+        <h2 class="panel__title" data-i18n="gameover.title">Игра окончена</h2>
+        <p class="panel__subtitle" id="gameover-note" data-i18n="gameover.note">Некуда поставить фигуры</p>
+        <div class="stats">
+          <div class="stats__item">
+            <span class="stats__label" data-i18n="hud.score">Счёт</span>
+            <b class="stats__value" id="over-score">0</b>
+          </div>
+          <div class="stats__item">
+            <span class="stats__label" data-i18n="hud.best">Рекорд</span>
+            <b class="stats__value" id="over-best">0</b>
+          </div>
+        </div>
+        <p class="badge badge--new" id="over-record" hidden data-i18n="gameover.record">Новый рекорд!</p>
+        <div class="actions">
+          <button class="btn btn--reward" id="btn-rescue" type="button">
+            <svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <rect x="2.5" y="5" width="19" height="14" rx="3" fill="none" stroke="currentColor" stroke-width="2"/>
+              <path d="M10 9.3l5 2.7-5 2.7z" fill="currentColor"/>
+            </svg>
+            <span data-i18n="gameover.rescue">Спасение за рекламу</span>
+          </button>
+          <button class="btn btn--primary" id="btn-again" type="button" data-i18n="gameover.again">Играть снова</button>
+          <button class="btn btn--ghost" id="btn-over-leaders" type="button" data-i18n="menu.leaders">Лидеры</button>
+          <button class="btn btn--ghost" id="btn-over-menu" type="button" data-i18n="pause.menu">В меню</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Лидерборд -->
+    <section class="screen" id="screen-leaders">
+      <div class="panel panel--wide">
+        <h2 class="panel__title" data-i18n="leaders.title">Лидеры</h2>
+        <div class="leaders" id="leaders-list">
+          <p class="muted" data-i18n="leaders.loading">Загрузка…</p>
+        </div>
+        <div class="actions">
+          <button class="btn btn--ghost" id="btn-login" type="button" hidden data-i18n="leaders.login">Войти, чтобы попасть в рейтинг</button>
+          <button class="btn btn--primary" id="btn-leaders-back" type="button" data-i18n="common.back">Назад</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Как играть -->
+    <section class="screen" id="screen-howto">
+      <div class="panel panel--wide">
+        <h2 class="panel__title" data-i18n="howto.title">Как играть</h2>
+        <ul class="rules">
+          <li data-i18n="howto.r1">Перетаскивайте фигуры из нижнего ряда на поле 9×9.</li>
+          <li data-i18n="howto.r2">Заполните строку, столбец или квадрат 3×3 — они исчезнут.</li>
+          <li data-i18n="howto.r3">Несколько линий за один ход и серии подряд дают комбо-множитель.</li>
+          <li data-i18n="howto.r4">Игра заканчивается, когда ни одна из трёх фигур не помещается.</li>
+        </ul>
+        <div class="actions">
+          <button class="btn btn--primary" id="btn-howto-back" type="button" data-i18n="common.back">Назад</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Реклама -->
+    <section class="screen screen--solid" id="screen-adv">
+      <div class="panel panel--plain">
+        <div class="loader"><i></i></div>
+        <p class="muted" data-i18n="adv.wait">Реклама…</p>
+      </div>
+    </section>
+
+  </div>
+</div>
+
+<script type="module" src="src/main.js"></script>
+</body>
+</html>

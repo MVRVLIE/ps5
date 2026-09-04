@@ -1,0 +1,18 @@
+{
+  "name": "nine-block-puzzle",
+  "version": "1.0.0",
+  "description": "«Девятка» — блок-пазл 9x9 для Яндекс Игр. Без зависимостей, HTML5 Canvas + Yandex Games SDK v2.",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node tools/serve.mjs",
+    "assets": "node tools/make-assets.mjs",
+    "build": "node tools/build.mjs",
+    "test": "node --test tests/*.test.mjs",
+    "test:e2e": "node tests/e2e.mjs"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "license": "MIT"
+}
