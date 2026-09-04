@@ -1,0 +1,24 @@
+{
+  "name": "formula-simpatii",
+  "version": "1.0.0",
+  "description": "Формула симпатии — мобильная новелла-мессенджер: решай примеры вместе с Никой, прокачивай симпатию, собирай коллекцию фото.",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "test": "node test/smoke.mjs"
+  },
+  "keywords": [
+    "game",
+    "visual-novel",
+    "math",
+    "html5",
+    "pwa",
+    "mobile"
+  ],
+  "license": "MIT",
+  "devDependencies": {
+    "playwright": "^1.49.1"
+  }
+}
