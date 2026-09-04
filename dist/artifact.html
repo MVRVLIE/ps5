@@ -1,0 +1,2033 @@
+<title>Формула симпатии</title>
+<style>
+/* ── Формула симпатии ── визуал: тёплый неон на глубоком фиолетовом ── */
+:root{
+  --bg:#0e0b16;
+  --bg-2:#171128;
+  --panel:#1c1630;
+  --panel-2:#241c3d;
+  --line:rgba(255,255,255,.08);
+  --txt:#f2edff;
+  --txt-dim:#a99fc4;
+  --pink:#ff6b9d;
+  --violet:#b06dff;
+  --cyan:#5ee0d0;
+  --gold:#ffca6b;
+  --ok:#63e6a4;
+  --bad:#ff7a7a;
+  --grad:linear-gradient(135deg,var(--pink),var(--violet));
+  --shadow:0 18px 44px rgba(0,0,0,.45);
+  --safe-t:env(safe-area-inset-top,0px);
+  --safe-b:env(safe-area-inset-bottom,0px);
+}
+
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+[hidden]{display:none!important}
+html,body{height:100%}
+body{
+  margin:0;
+  font:15px/1.45 -apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,system-ui,sans-serif;
+  color:var(--txt);
+  background:var(--bg);
+  overflow:hidden;
+  overscroll-behavior:none;
+  -webkit-font-smoothing:antialiased;
+}
+button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
+b{font-weight:650}
+
+/* Аура на фоне — она же «дышит» на уровнях симпатии */
+body::before{
+  content:"";position:fixed;inset:-20%;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(46% 34% at 22% 8%, rgba(255,107,157,.20), transparent 70%),
+    radial-gradient(44% 36% at 88% 22%, rgba(176,109,255,.18), transparent 70%),
+    radial-gradient(60% 40% at 50% 110%, rgba(94,224,208,.10), transparent 70%);
+  filter:blur(6px);
+  animation:drift 26s ease-in-out infinite alternate;
+}
+@keyframes drift{to{transform:translate3d(0,-3%,0) scale(1.06)}}
+
+.phone{
+  position:relative;z-index:1;
+  display:flex;flex-direction:column;
+  height:100dvh;max-width:520px;margin:0 auto;
+  padding-top:var(--safe-t);
+}
+
+/* ── Экраны ── */
+.view{display:none;flex:1;min-height:0;flex-direction:column}
+.view.active{display:flex}
+
+/* ── Шапка чата ── */
+.chat-head{
+  display:flex;align-items:center;gap:11px;
+  padding:10px 14px;
+  background:rgba(23,17,40,.78);
+  backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+  border-bottom:1px solid var(--line);
+}
+.avatar{
+  width:42px;height:42px;border-radius:50%;overflow:hidden;flex:none;
+  background:var(--grad);box-shadow:0 0 0 2px rgba(255,107,157,.35),0 6px 16px rgba(0,0,0,.4);
+}
+.avatar svg{display:block;width:100%;height:100%}
+.chat-who{flex:1;min-width:0;display:flex;flex-direction:column;line-height:1.2}
+.chat-who b{font-size:16px}
+.chat-who span{font-size:12px;color:var(--cyan);height:14px}
+.chat-who span.typing{color:var(--txt-dim);font-style:italic}
+
+.affection{display:flex;flex-direction:column;align-items:flex-end;gap:5px;flex:none}
+.aff-bar{width:78px;height:7px;border-radius:99px;background:rgba(255,255,255,.10);overflow:hidden}
+.aff-bar i{display:block;height:100%;width:0;border-radius:99px;background:var(--grad);transition:width .55s cubic-bezier(.2,.8,.2,1)}
+.affection span{font-size:11px;color:var(--txt-dim);letter-spacing:.02em}
+.affection.pulse .aff-bar{animation:affpulse .5s ease}
+.icon-btn{
+  flex:none;width:34px;height:34px;border-radius:50%;
+  background:rgba(255,255,255,.07);border:1px solid var(--line);
+  font-size:15px;line-height:1;color:var(--txt-dim);transition:transform .15s,background .2s
+}
+.icon-btn:active{transform:scale(.9);background:rgba(255,255,255,.14)}
+@keyframes affpulse{50%{transform:scaleY(1.9)}}
+
+/* ── Лента сообщений ── */
+.thread{
+  flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;
+  padding:16px 14px 8px;
+  display:flex;flex-direction:column;gap:9px;
+  scroll-behavior:smooth;
+}
+.thread::-webkit-scrollbar{width:0}
+
+.row{display:flex;gap:8px;align-items:flex-end;max-width:100%;animation:pop .34s cubic-bezier(.2,.9,.25,1.1) both}
+.row.me{flex-direction:row-reverse}
+@keyframes pop{from{opacity:0;transform:translateY(12px) scale(.96)}}
+
+.row .mini{width:26px;height:26px;border-radius:50%;overflow:hidden;flex:none;opacity:.95}
+.row .mini svg{width:100%;height:100%;display:block}
+.row.me .mini{display:none}
+.row.tail .mini{visibility:hidden}
+
+.bubble{
+  max-width:78%;padding:10px 14px;border-radius:20px;
+  background:var(--panel);border:1px solid var(--line);
+  border-bottom-left-radius:6px;
+  box-shadow:0 6px 18px rgba(0,0,0,.28);
+  word-break:break-word;
+}
+.row.me .bubble{
+  background:var(--grad);border:0;color:#fff;
+  border-radius:20px;border-bottom-right-radius:6px;
+  box-shadow:0 8px 22px rgba(176,109,255,.30);
+}
+.bubble.sys{
+  max-width:100%;text-align:center;background:transparent;border:0;box-shadow:none;
+  color:var(--txt-dim);font-size:12.5px;letter-spacing:.03em;text-transform:uppercase;
+  padding:14px 0 6px;
+}
+.bubble.sys::before,.bubble.sys::after{content:"·····";opacity:.4;margin:0 8px}
+
+/* Индикатор «печатает» */
+.typing-b{display:flex;gap:4px;padding:14px 16px}
+.typing-b i{width:7px;height:7px;border-radius:50%;background:var(--txt-dim);animation:blink 1.25s infinite}
+.typing-b i:nth-child(2){animation-delay:.18s}
+.typing-b i:nth-child(3){animation-delay:.36s}
+@keyframes blink{0%,60%,100%{opacity:.28;transform:translateY(0)}30%{opacity:1;transform:translateY(-3px)}}
+
+/* ── Карточка примера ── */
+.task{
+  align-self:flex-start;max-width:88%;width:100%;margin-left:34px;
+  background:linear-gradient(160deg,#241c3d,#1a1430);
+  border:1px solid rgba(176,109,255,.30);
+  border-radius:22px;padding:16px 16px 14px;
+  box-shadow:0 14px 34px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.06);
+  animation:pop .34s cubic-bezier(.2,.9,.25,1.1) both;
+}
+.task .topic{font-size:11px;letter-spacing:.10em;text-transform:uppercase;color:var(--violet);margin-bottom:9px}
+.task .q{
+  font-size:26px;font-weight:600;letter-spacing:.01em;
+  font-variant-numeric:tabular-nums;
+  font-family:"SF Mono",ui-monospace,Menlo,Consolas,monospace;
+  line-height:1.3;
+}
+.task .q small{display:block;font-family:inherit;font-size:14px;font-weight:400;color:var(--txt-dim);margin-top:6px;line-height:1.4;font-family:-apple-system,system-ui,sans-serif}
+.task .streak{margin-top:10px;font-size:12px;color:var(--gold)}
+
+/* Разбор после ошибки */
+.solve{
+  align-self:flex-start;max-width:88%;margin-left:34px;
+  background:rgba(255,122,122,.08);border:1px solid rgba(255,122,122,.28);
+  border-radius:16px;padding:11px 14px;font-size:13.5px;color:#ffd9d9;
+  animation:pop .3s ease both;
+}
+.solve b{color:#fff}
+
+/* ── Фото-карточка (полароид) ── */
+.photo{
+  align-self:flex-start;max-width:58%;margin-left:34px;
+  background:linear-gradient(#fdf8f2,#f2e9de);
+  padding:9px 9px 12px;border-radius:14px;
+  box-shadow:0 16px 40px rgba(0,0,0,.5);
+  transform:rotate(-1.6deg);
+  animation:drop .55s cubic-bezier(.2,.9,.3,1.15) both;
+  cursor:pointer;
+}
+.photo:nth-of-type(even){transform:rotate(1.4deg)}
+@keyframes drop{from{opacity:0;transform:translateY(-18px) rotate(6deg) scale(.9)}}
+.photo .frame{border-radius:8px;overflow:hidden;background:#2a2340;aspect-ratio:4/5;display:block}
+.photo .frame svg{display:block;width:100%;height:100%}
+.photo .cap{margin-top:8px;font-size:12px;color:#6b5c74;text-align:center;font-family:"Bradley Hand","Segoe Script","Comic Sans MS",cursive}
+.photo:active{transform:scale(.97)}
+
+/* ── Низ: варианты ответа / реплики ── */
+.composer{
+  padding:10px 12px calc(10px + var(--safe-b));
+  border-top:1px solid var(--line);
+  background:rgba(23,17,40,.82);
+  backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+  min-height:74px;display:flex;flex-direction:column;justify-content:center;gap:8px;
+}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.opt{
+  padding:14px 10px;border-radius:16px;
+  background:var(--panel-2);border:1px solid var(--line);
+  font-size:19px;font-weight:600;font-variant-numeric:tabular-nums;
+  font-family:"SF Mono",ui-monospace,Menlo,monospace;
+  transition:transform .12s ease,background .2s ease,border-color .2s;
+  animation:pop .3s ease both;
+}
+.opt:active{transform:scale(.95)}
+.opt.right{background:rgba(99,230,164,.16);border-color:var(--ok);color:#c7ffe4;animation:goodshake .45s ease}
+.opt.wrong{background:rgba(255,122,122,.14);border-color:var(--bad);color:#ffd0d0;animation:badshake .4s ease}
+.opt[disabled]{opacity:.45}
+@keyframes goodshake{40%{transform:scale(1.07)}}
+@keyframes badshake{20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
+
+.replies{display:flex;flex-direction:column;gap:8px}
+.reply{
+  padding:12px 16px;border-radius:18px;text-align:left;
+  background:var(--panel-2);border:1px solid rgba(176,109,255,.22);
+  font-size:14.5px;transition:transform .12s,background .2s;
+  animation:pop .3s ease both;
+}
+.reply:active{transform:scale(.97);background:#2e2450}
+
+.cta{
+  padding:15px;border-radius:18px;background:var(--grad);color:#fff;
+  font-size:16px;font-weight:650;letter-spacing:.02em;
+  box-shadow:0 10px 26px rgba(255,107,157,.30);
+  animation:pop .3s ease both;
+}
+.cta:active{transform:scale(.97)}
+.cta.quiet{background:var(--panel-2);box-shadow:none;border:1px solid var(--line);color:var(--txt-dim);font-weight:500;font-size:14px;padding:12px}
+.hintline{text-align:center;font-size:12px;color:var(--txt-dim)}
+
+/* ── Галерея ── */
+.plain-head{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:16px 18px 12px;border-bottom:1px solid var(--line);
+}
+.plain-head b{font-size:22px;letter-spacing:-.01em}
+.plain-head span{font-size:13px;color:var(--txt-dim)}
+.grid{
+  flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;
+  display:grid;grid-template-columns:1fr 1fr;gap:12px;
+  padding:14px 14px calc(14px + var(--safe-b));
+}
+.card{
+  background:linear-gradient(#fdf8f2,#efe5da);padding:7px 7px 10px;border-radius:12px;
+  box-shadow:0 10px 26px rgba(0,0,0,.38);animation:pop .35s ease both;
+}
+.card .frame{border-radius:7px;overflow:hidden;aspect-ratio:4/5;background:#2a2340}
+.card .frame svg{display:block;width:100%;height:100%}
+.card .cap{margin-top:7px;font-size:11px;color:#6b5c74;text-align:center}
+.card.locked{background:var(--panel);box-shadow:none;border:1px dashed rgba(255,255,255,.14)}
+.card.locked .frame{
+  background:repeating-linear-gradient(45deg,#1e1834,#1e1834 8px,#231c3c 8px,#231c3c 16px);
+  display:flex;align-items:center;justify-content:center;opacity:.55
+}
+.card.locked .frame svg{width:30px;height:30px;color:var(--txt-dim)}
+.card.locked .cap{color:var(--txt-dim)}
+.card.fresh{position:relative}
+.card.fresh::after{
+  content:"NEW";position:absolute;top:-6px;right:-6px;
+  background:var(--grad);color:#fff;font-size:10px;font-weight:700;letter-spacing:.06em;
+  padding:3px 7px;border-radius:99px;box-shadow:0 4px 12px rgba(255,107,157,.5);
+}
+
+/* ── Профиль ── */
+.profile{flex:1;min-height:0;overflow-y:auto;padding:16px 16px calc(16px + var(--safe-b));display:flex;flex-direction:column;gap:12px}
+.pcard{background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:16px}
+.pcard h3{margin:0 0 12px;font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--txt-dim);font-weight:600}
+.prow{display:flex;justify-content:space-between;align-items:baseline;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.05)}
+.prow:last-child{border:0}
+.prow span{color:var(--txt-dim);font-size:14px}
+.prow b{font-size:17px;font-variant-numeric:tabular-nums}
+.streakbig{display:flex;align-items:center;gap:14px}
+.streakbig .fire{font-size:40px;filter:drop-shadow(0 0 14px rgba(255,180,80,.5))}
+.streakbig div b{font-size:28px;display:block;line-height:1.1}
+.streakbig div span{font-size:13px;color:var(--txt-dim)}
+.achv{display:flex;flex-wrap:wrap;gap:8px}
+.badge{
+  padding:8px 12px;border-radius:14px;font-size:12.5px;
+  background:var(--panel-2);border:1px solid var(--line);color:var(--txt-dim)
+}
+.badge.on{background:rgba(255,202,107,.13);border-color:rgba(255,202,107,.45);color:var(--gold)}
+
+/* ── Табы ── */
+.tabs{
+  display:flex;border-top:1px solid var(--line);
+  background:rgba(23,17,40,.9);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+  padding-bottom:var(--safe-b);flex:none;
+}
+.tab{
+  flex:1;padding:9px 0 8px;display:flex;flex-direction:column;align-items:center;gap:2px;
+  color:var(--txt-dim);position:relative;transition:color .2s
+}
+.tab i{display:block;font-style:normal;opacity:.55;transition:opacity .2s,transform .2s}
+.tab i svg{display:block;width:23px;height:23px}
+.tab span{font-size:10.5px;letter-spacing:.02em}
+.tab.active{color:var(--pink)}
+.tab.active i{opacity:1;transform:translateY(-1px) scale(1.08)}
+.tab .dot{
+  position:absolute;top:6px;right:calc(50% - 20px);
+  width:9px;height:9px;border-radius:50%;background:var(--pink);
+  box-shadow:0 0 0 3px rgba(255,107,157,.22);animation:beat 1.4s infinite
+}
+@keyframes beat{50%{transform:scale(1.35)}}
+
+/* ── Лайтбокс ── */
+.lightbox{
+  position:fixed;inset:0;z-index:50;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:16px;padding:24px;
+  background:rgba(8,6,14,.90);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  animation:fade .25s ease
+}
+@keyframes fade{from{opacity:0}}
+.lb-card{width:min(78vw,330px);background:linear-gradient(#fdf8f2,#efe5da);padding:11px 11px 14px;border-radius:16px;box-shadow:0 30px 70px rgba(0,0,0,.7);animation:pop .4s cubic-bezier(.2,.9,.3,1.15) both}
+.lb-card .frame{border-radius:9px;overflow:hidden;aspect-ratio:4/5}
+.lb-card .frame svg{display:block;width:100%;height:100%}
+.lb-cap{text-align:center;color:var(--txt-dim);font-size:14px;max-width:330px}
+.lb-close{padding:12px 26px;border-radius:99px;background:rgba(255,255,255,.10);font-size:14px}
+
+/* ── Тосты и левелап ── */
+.toast{
+  position:fixed;left:50%;top:calc(var(--safe-t) + 66px);transform:translate(-50%,-24px);
+  z-index:60;padding:10px 18px;border-radius:99px;
+  background:rgba(28,22,48,.96);border:1px solid rgba(176,109,255,.35);
+  font-size:13.5px;box-shadow:var(--shadow);
+  opacity:0;pointer-events:none;transition:opacity .3s,transform .3s
+}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+
+.levelup{
+  position:fixed;inset:0;z-index:70;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:8px;
+  background:rgba(9,7,17,.94);
+  backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+  animation:fade .3s ease
+}
+.levelup::before{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(circle at 50% 42%,rgba(176,109,255,.38),transparent 60%)
+}
+.levelup > *{position:relative}
+.levelup .big{
+  font-size:15px;letter-spacing:.24em;text-transform:uppercase;color:var(--pink);
+  animation:pop .5s cubic-bezier(.2,.9,.3,1.2) both
+}
+.levelup .n{
+  font-size:74px;font-weight:750;line-height:1;
+  background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;
+  animation:pop .55s .08s cubic-bezier(.2,.9,.3,1.3) both;
+  filter:drop-shadow(0 8px 30px rgba(255,107,157,.45))
+}
+.levelup .sub{color:var(--txt-dim);font-size:14.5px;text-align:center;max-width:270px;animation:pop .5s .18s ease both}
+
+@media (prefers-reduced-motion:reduce){
+  *{animation-duration:.01ms!important;transition-duration:.01ms!important}
+  .thread{scroll-behavior:auto}
+}
+
+</style>
+
+<div class="phone" id="phone">
+
+  <!-- ЭКРАН: чат -->
+  <section class="view view-chat active" id="view-chat">
+    <header class="chat-head">
+      <div class="avatar" id="head-avatar"></div>
+      <div class="chat-who">
+        <b>Ника</b>
+        <span id="head-status">в сети</span>
+      </div>
+      <div class="affection" id="affection" title="Симпатия">
+        <div class="aff-bar"><i id="aff-fill"></i></div>
+        <span id="aff-lvl">ур. 1</span>
+      </div>
+      <button id="btn-mute" class="icon-btn" aria-label="Звук">♪</button>
+    </header>
+
+    <div class="thread" id="thread"></div>
+
+    <footer class="composer" id="composer"></footer>
+  </section>
+
+  <!-- ЭКРАН: галерея -->
+  <section class="view view-gallery" id="view-gallery">
+    <header class="plain-head">
+      <b>Галерея</b>
+      <span id="gallery-count">0 / 0</span>
+    </header>
+    <div class="grid" id="grid"></div>
+  </section>
+
+  <!-- ЭКРАН: профиль -->
+  <section class="view view-profile" id="view-profile">
+    <header class="plain-head"><b>Профиль</b></header>
+    <div class="profile" id="profile"></div>
+  </section>
+
+  <nav class="tabs" id="tabs">
+    <button class="tab active" data-view="chat">
+      <i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.5 11.8a8 8 0 0 1-8.6 8 8.8 8.8 0 0 1-3.4-.7L3.5 20.5l1.8-4.4a7.9 7.9 0 0 1-1.3-4.3 8 8 0 0 1 8.1-7.8 8 8 0 0 1 8.4 7.8z"/></svg></i>
+      <span>Чат</span><em class="dot" id="dot-chat" hidden></em>
+    </button>
+    <button class="tab" data-view="gallery">
+      <i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="15" rx="2.5"/><circle cx="8.5" cy="10" r="1.6"/><path d="m20.5 16-4.7-4.6L6 19.5"/></svg></i>
+      <span>Галерея</span><em class="dot" id="dot-gallery" hidden></em>
+    </button>
+    <button class="tab" data-view="profile">
+      <i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8.2" r="3.9"/><path d="M4.5 20.5a7.5 7.5 0 0 1 15 0"/></svg></i>
+      <span>Профиль</span>
+    </button>
+  </nav>
+
+  <!-- Просмотр фото -->
+  <div class="lightbox" id="lightbox" hidden>
+    <div class="lb-card" id="lb-card"></div>
+    <div class="lb-cap" id="lb-cap"></div>
+    <button class="lb-close" id="lb-close">Закрыть</button>
+  </div>
+
+  <!-- Всплывашки -->
+  <div class="toast" id="toast"></div>
+  <div class="levelup" id="levelup" hidden></div>
+</div>
+
+<script type="module">
+/* Формула симпатии — собрано из src/ через build.mjs. Правки вносить в src/. */
+const __m = {};
+
+__m.state = (() => {
+/** Сохранение прогресса и вся «мета» — симпатия, уровни, стрик, коллекция. */
+
+const KEY = 'formula-simpatii.v1';
+
+/** Порог симпатии для каждого уровня (индекс = уровень − 1). */
+const LEVELS = [0, 40, 95, 165, 250, 350, 470, 610, 780, 980];
+const MAX_LEVEL = LEVELS.length;
+
+/** Как Ника подписывает уровень отношений — это и есть «лестница» удержания. */
+const LEVEL_NAMES = [
+  'незнакомцы', 'сосед по чату', 'свой человек', 'почти друг', 'друг',
+  'близкий друг', 'что-то большее', 'нравишься ей', 'её человек', 'формула сошлась',
+];
+
+const DEFAULTS = {
+  aff: 0,
+  chapter: 0,      // индекс текущей главы
+  step: 0,         // шаг внутри главы
+  solved: 0,
+  wrong: 0,
+  streak: 0,       // текущая серия верных ответов
+  bestStreak: 0,
+  photos: [],      // разблокированные id
+  fresh: [],       // ещё не просмотренные (значок NEW)
+  days: 0,         // дней подряд заходил
+  lastDay: null,   // YYYY-MM-DD последнего захода
+  dailyDay: null,  // день, когда пройден челлендж
+  dailyBest: 0,
+  marathonBest: 0,
+  muted: false,
+  seenIntro: false,
+  marathonStarted: false,
+  log: [],          // последние реплики, чтобы чат не был пустым при возврате
+};
+
+/** Сколько сообщений храним в «истории переписки». */
+const LOG_CAP = 40;
+
+const S = { ...DEFAULTS };
+
+function load() {
+  try {
+    const raw = localStorage.getItem(KEY);
+    if (raw) Object.assign(S, DEFAULTS, JSON.parse(raw));
+  } catch { /* приватный режим — играем без сохранения */ }
+  return S;
+}
+
+let saveTimer = 0;
+function save() {
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => {
+    try { localStorage.setItem(KEY, JSON.stringify(S)); } catch { /* ignore */ }
+  }, 120);
+}
+
+function reset() {
+  Object.assign(S, DEFAULTS, { photos: [], fresh: [] });
+  save();
+}
+
+/** Записать реплику в историю чата. */
+function pushLog(entry) {
+  S.log.push(entry);
+  if (S.log.length > LOG_CAP) S.log.splice(0, S.log.length - LOG_CAP);
+  save();
+}
+
+/* ── Симпатия и уровни ── */
+
+function levelInfo(aff = S.aff) {
+  let level = 1;
+  while (level < MAX_LEVEL && aff >= LEVELS[level]) level++;
+  const from = LEVELS[level - 1];
+  const to = level < MAX_LEVEL ? LEVELS[level] : from;
+  const pct = level < MAX_LEVEL ? (aff - from) / (to - from) : 1;
+  return {
+    level,
+    name: LEVEL_NAMES[level - 1],
+    into: aff - from,
+    need: level < MAX_LEVEL ? to - from : 0,
+    pct: Math.max(0, Math.min(1, pct)),
+    max: level >= MAX_LEVEL,
+  };
+}
+
+/** Начислить симпатию. Возвращает новый уровень, если он вырос. */
+function addAffection(n) {
+  const before = levelInfo().level;
+  S.aff = Math.max(0, S.aff + n);
+  const after = levelInfo().level;
+  save();
+  return after > before ? after : 0;
+}
+
+/* ── Ответы ── */
+
+function markCorrect() {
+  S.solved++;
+  S.streak++;
+  if (S.streak > S.bestStreak) S.bestStreak = S.streak;
+  save();
+  return S.streak;
+}
+
+function markWrong() {
+  S.wrong++;
+  S.streak = 0;
+  save();
+}
+
+/* ── Коллекция ── */
+
+function unlockPhoto(id) {
+  if (S.photos.includes(id)) return false;
+  S.photos.push(id);
+  if (!S.fresh.includes(id)) S.fresh.push(id);
+  save();
+  return true;
+}
+
+const hasPhoto = (id) => S.photos.includes(id);
+
+function markSeen(id) {
+  const i = S.fresh.indexOf(id);
+  if (i >= 0) { S.fresh.splice(i, 1); save(); }
+}
+
+/* ── Стрик по дням: главный крючок возврата ── */
+
+const today = () => new Date().toISOString().slice(0, 10);
+
+/** Отметить заход. Возвращает {isNewDay, streak, broken}. */
+function touchDay() {
+  const t = today();
+  if (S.lastDay === t) return { isNewDay: false, streak: S.days, broken: false };
+
+  const y = new Date(Date.now() - 864e5).toISOString().slice(0, 10);
+  const broken = !!S.lastDay && S.lastDay !== y;
+  S.days = S.lastDay === y ? S.days + 1 : 1;
+  S.lastDay = t;
+  save();
+  return { isNewDay: true, streak: S.days, broken };
+}
+
+/** Сид челленджа дня — одинаковый для всех игроков в этот день. */
+function todaySeed() {
+  const t = today();
+  let h = 2166136261;
+  for (let i = 0; i < t.length; i++) { h ^= t.charCodeAt(i); h = Math.imul(h, 16777619); }
+  return h >>> 0;
+}
+
+const dailyDone = () => S.dailyDay === today();
+function finishDaily(score) {
+  S.dailyDay = today();
+  if (score > S.dailyBest) S.dailyBest = score;
+  save();
+}
+
+return { LEVELS, MAX_LEVEL, LEVEL_NAMES, S, load, save, reset, pushLog, levelInfo, addAffection, markCorrect, markWrong, unlockPhoto, hasPhoto, markSeen, today, touchDay, todaySeed, dailyDone, finishDaily };
+})();
+
+__m.math = (() => {
+/**
+ * Генератор примеров. Темы идут по программе первого курса — вместе
+ * с сюжетом (Ника готовится к экзамену), поэтому сложность растёт
+ * естественно, а не «числа стали больше».
+ */
+
+let rand = Math.random;
+
+/** Детерминированный ГПСЧ — для челленджа дня: у всех одинаковые примеры. */
+function seededRandom(seed) {
+  let a = seed >>> 0;
+  return () => {
+    a |= 0; a = (a + 0x6d2b79f5) | 0;
+    let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+const useRandom = (fn) => { rand = fn || Math.random; };
+
+const ri = (a, b) => a + Math.floor(rand() * (b - a + 1));
+const pick = (arr) => arr[Math.floor(rand() * arr.length)];
+const shuffle = (arr) => {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(rand() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
+  return a;
+};
+
+const TOPICS = {
+  arith:      'Арифметика',
+  fraction:   'Дроби',
+  percent:    'Проценты',
+  linear:     'Уравнение',
+  power:      'Степени',
+  quadratic:  'Квадратное',
+  progression:'Прогрессия',
+  combi:      'Комбинаторика',
+  derivative: 'Производная',
+  integral:   'Интеграл',
+  limit:      'Предел',
+};
+
+/* ── генераторы ── */
+
+const G = {
+  arith(d) {
+    const a = ri(6 + d * 4, 12 + d * 12), b = ri(4, 6 + d * 3);
+    if (rand() < 0.5) {
+      const c = ri(2, 5 + d);
+      return { q: `${a} · ${b} − ${c * b}`, ans: a * b - c * b,
+        sol: `Вынеси ${b}: ${b}·(${a} − ${c}) = ${b}·${a - c} = ${a * b - c * b}.` };
+    }
+    return { q: `${a} · ${b}`, ans: a * b,
+      sol: `${a}·${b} = ${a}·${b - (b % 5)} + ${a}·${b % 5} = ${a * (b - (b % 5))} + ${a * (b % 5)} = ${a * b}.` };
+  },
+
+  fraction(d) {
+    const b = pick([4, 6, 8, 12]), c = pick([3, 6, 9, 12]);
+    const a = ri(1, b - 1), e = ri(1, c - 1);
+    const num = a * c + e * b, den = b * c;
+    const g = gcd(num, den);
+    return {
+      q: `${a}/${b} + ${e}/${c}`,
+      ans: `${num / g}/${den / g}`,
+      sol: `Общий знаменатель ${den}: ${a * c}/${den} + ${e * b}/${den} = ${num}/${den} = ${num / g}/${den / g}.`,
+      opts: uniq([`${num / g}/${den / g}`, `${a + e}/${b + c}`, `${num / g + 1}/${den / g}`, `${a * e}/${b * c}`]),
+    };
+  },
+
+  percent(d) {
+    const base = pick([200, 240, 350, 480, 600, 750, 1200]);
+    const p = pick([5, 10, 12, 15, 20, 25, 30, 40]);
+    if (d > 2 && rand() < 0.5) {
+      const after = Math.round(base * (1 + p / 100));
+      return { q: `${base} + ${p}%`, ans: after,
+        sol: `${p}% от ${base} = ${base * p / 100}. Итого ${base} + ${base * p / 100} = ${after}.`,
+        sub: 'цена выросла на процент — сколько стало?' };
+    }
+    return { q: `${p}% от ${base}`, ans: (base * p) / 100,
+      sol: `${base} · ${p} / 100 = ${(base * p) / 100}.` };
+  },
+
+  linear(d) {
+    const x = ri(2, 4 + d * 3), a = ri(2, 4 + d), b = ri(1, 9 + d * 4);
+    const c = a * x + b;
+    return { q: `${a}x + ${b} = ${c}`, ans: x, sub: 'найди x',
+      sol: `${a}x = ${c} − ${b} = ${c - b}, значит x = ${c - b}/${a} = ${x}.` };
+  },
+
+  power(d) {
+    if (rand() < 0.45) {
+      const n = pick([4, 9, 16, 25, 36, 49, 64, 81, 100, 121, 144, 169, 196, 225]);
+      return { q: `√${n}`, ans: Math.sqrt(n), sol: `${Math.sqrt(n)}² = ${n}, значит √${n} = ${Math.sqrt(n)}.` };
+    }
+    const a = ri(2, 3 + d), n = ri(2, 3), m = ri(2, 3);
+    return { q: `${a}${sup(n)} · ${a}${sup(m)}`, ans: Math.pow(a, n + m),
+      sol: `При умножении степени складываются: ${a}${sup(n)}·${a}${sup(m)} = ${a}${sup(n + m)} = ${Math.pow(a, n + m)}.` };
+  },
+
+  quadratic(d) {
+    const r1 = ri(1, 5), r2 = ri(1, 6);
+    const b = -(r1 + r2), c = r1 * r2;
+    const bigger = Math.max(r1, r2);
+    return {
+      q: `x² ${b < 0 ? '−' : '+'} ${Math.abs(b)}x + ${c} = 0`,
+      ans: bigger, sub: 'больший корень',
+      sol: `По Виету: сумма корней ${-b}, произведение ${c}. Это ${r1} и ${r2}. Больший — ${bigger}.`,
+    };
+  },
+
+  progression(d) {
+    const a1 = ri(2, 9), step = ri(2, 4 + d), n = ri(5, 8 + d);
+    if (rand() < 0.5) {
+      const an = a1 + step * (n - 1);
+      return { q: `a₁=${a1}, d=${step} → a${sub(n)}`, ans: an,
+        sol: `aₙ = a₁ + d(n−1) = ${a1} + ${step}·${n - 1} = ${an}.` };
+    }
+    const sum = ((2 * a1 + step * (n - 1)) * n) / 2;
+    return { q: `a₁=${a1}, d=${step} → S${sub(n)}`, ans: sum, sub: `сумма первых ${n}`,
+      sol: `Sₙ = (2a₁ + d(n−1))·n/2 = (${2 * a1} + ${step * (n - 1)})·${n}/2 = ${sum}.` };
+  },
+
+  combi(d) {
+    const n = ri(4, 6 + d), k = ri(2, 3);
+    const c = fact(n) / (fact(k) * fact(n - k));
+    return { q: `C(${n}, ${k})`, ans: c, sub: 'сколькими способами выбрать',
+      sol: `C(n,k) = n!/(k!(n−k)!) = ${n}!/(${k}!·${n - k}!) = ${c}.` };
+  },
+
+  derivative(d) {
+    const a = ri(2, 5 + d), n = ri(2, 4);
+    const co = a * n, p = n - 1;
+    const right = mono(co, p);
+    return {
+      q: `(${mono(a, n)})′`, ans: right, sub: 'производная',
+      sol: `(axⁿ)′ = a·n·x⁽ⁿ⁻¹⁾ = ${a}·${n}·x${sup(p)} = ${right}.`,
+      opts: uniq([right, mono(a, p), mono(co, n), mono(co, n + 1)]),
+    };
+  },
+
+  integral(d) {
+    const n = ri(1, 3), a = (n + 1) * ri(1, 3);
+    const co = a / (n + 1), p = n + 1;
+    const right = `${mono(co, p)} + C`;
+    return {
+      q: `∫ ${mono(a, n)} dx`, ans: right, sub: 'неопределённый интеграл',
+      sol: `∫axⁿdx = a·x⁽ⁿ⁺¹⁾/(n+1) + C = ${a}x${sup(p)}/${p} + C = ${right}.`,
+      opts: uniq([right, `${mono(a, p)} + C`, `${mono(a * n, n - 1)} + C`, `${mono(co, n)} + C`]),
+    };
+  },
+
+  limit(d) {
+    const a = ri(2, 7);
+    if (rand() < 0.5) {
+      return { q: `lim (x² − ${a * a})/(x − ${a})`, sub: `при x → ${a}`, ans: 2 * a,
+        sol: `x² − ${a * a} = (x−${a})(x+${a}). Сокращаем: lim (x+${a}) = ${2 * a}.` };
+    }
+    const b = ri(2, 6), c = ri(2, 6);
+    return { q: `lim (${b}x + ${a})/(${c}x − 1)`, sub: 'при x → ∞',
+      ans: b % c === 0 ? b / c : `${b}/${c}`,
+      sol: `Делим на x: (${b} + ${a}/x)/(${c} − 1/x) → ${b}/${c}.`,
+      opts: uniq([b % c === 0 ? `${b / c}` : `${b}/${c}`, '0', '∞', `${c}/${b}`]) };
+  },
+};
+
+/* ── утилиты ── */
+
+const gcd = (a, b) => (b ? gcd(b, a % b) : a);
+const fact = (n) => (n <= 1 ? 1 : n * fact(n - 1));
+const SUP = { '-': '⁻', 0: '⁰', 1: '¹', 2: '²', 3: '³', 4: '⁴', 5: '⁵', 6: '⁶', 7: '⁷', 8: '⁸', 9: '⁹' };
+const SUB = { 0: '₀', 1: '₁', 2: '₂', 3: '₃', 4: '₄', 5: '₅', 6: '₆', 7: '₇', 8: '₈', 9: '₉' };
+const sup = (n) => String(n).split('').map((c) => SUP[c] ?? c).join('');
+const sub = (n) => String(n).split('').map((c) => SUB[c] ?? c).join('');
+const uniq = (a) => [...new Set(a.map(String))];
+/** Одночлен вида a·xⁿ в человеческой записи: 1x¹ → x, 5x⁰ → 5. */
+const mono = (a, p) => (p === 0 ? `${a}` : `${a === 1 ? '' : a}x${p === 1 ? '' : sup(p)}`);
+
+/** Правдоподобные неверные варианты для числового ответа. */
+function numericDistractors(ans) {
+  const n = Number(ans);
+  const cands = [n + 1, n - 1, n + 2, n - 2, n * 2, Math.round(n / 2), n + 10, n - 10];
+  const out = [];
+  for (const c of shuffle(cands)) {
+    if (c !== n && Number.isFinite(c) && (n < 0 || c >= 0) && !out.includes(c)) out.push(c);
+    if (out.length === 3) break;
+  }
+  while (out.length < 3) out.push(n + out.length + 3);
+  return out.map(String);
+}
+
+/** Собрать готовую задачу с четырьмя вариантами. */
+function makeProblem(topic, difficulty = 1) {
+  const gen = G[topic] || G.arith;
+  const raw = gen(Math.max(1, Math.min(5, difficulty)));
+  const ans = String(raw.ans);
+
+  let opts = raw.opts ? raw.opts.slice() : [ans, ...numericDistractors(ans)];
+  opts = uniq(opts).slice(0, 4);
+  while (opts.length < 4) opts.push(String(Number(ans) + opts.length * 3 + 1));
+  if (!opts.includes(ans)) opts[0] = ans;
+
+  return {
+    topic,
+    label: TOPICS[topic] || 'Задача',
+    q: raw.q,
+    sub: raw.sub || '',
+    answer: ans,
+    options: shuffle(opts),
+    solution: raw.sol,
+  };
+}
+
+/** Пул тем по уровню симпатии: чем дальше сюжет, тем серьёзнее матан. */
+function topicsForLevel(level) {
+  if (level <= 1) return ['arith', 'percent'];
+  if (level === 2) return ['arith', 'percent', 'fraction'];
+  if (level === 3) return ['percent', 'fraction', 'linear', 'power'];
+  if (level === 4) return ['linear', 'power', 'quadratic'];
+  if (level === 5) return ['quadratic', 'progression', 'power'];
+  if (level === 6) return ['progression', 'combi', 'quadratic'];
+  if (level === 7) return ['derivative', 'combi', 'progression'];
+  if (level === 8) return ['derivative', 'integral'];
+  if (level === 9) return ['derivative', 'integral', 'limit'];
+  return ['derivative', 'integral', 'limit', 'quadratic'];
+}
+
+return { seededRandom, useRandom, TOPICS, makeProblem, topicsForLevel };
+})();
+
+__m.art = (() => {
+/**
+ * Векторная графика игры. Никаких внешних ассетов: все «фото» и аватары
+ * рисуются как SVG-строки, поэтому билд весит килобайты и работает офлайн.
+ * Все изображения — 4:5, viewBox 200×250.
+ */
+
+const SKIN = '#f7d5bf';
+const SKIN_SH = '#e9b79b';
+const HAIR = '#452742';
+const HAIR_HI = '#6d4066';
+const LINE = '#2b1b2e';
+
+let uid = 0;
+const nextId = (p) => `${p}${++uid}`;
+
+const wrap = (inner) =>
+  `<svg viewBox="0 0 200 250" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">${inner}</svg>`;
+
+function bgGrad(id, from, to) {
+  return `<linearGradient id="${id}" x1="0" y1="0" x2="0.35" y2="1">
+    <stop offset="0" stop-color="${from}"/><stop offset="1" stop-color="${to}"/>
+  </linearGradient>`;
+}
+
+/* ─────────────────────────── Портрет ─────────────────────────── */
+
+function eyes(expr) {
+  const L = 82, R = 118, y = 108;
+  const open = (cx) => `
+    <ellipse cx="${cx}" cy="${y}" rx="7.5" ry="9" fill="#fff"/>
+    <circle cx="${cx + 0.5}" cy="${y + 1}" r="5.4" fill="${LINE}"/>
+    <circle cx="${cx + 2.4}" cy="${y - 2.2}" r="2" fill="#fff"/>
+    <circle cx="${cx - 2}" cy="${y + 3.4}" r="1.1" fill="#fff" opacity=".65"/>`;
+  const closedUp = (cx) =>
+    `<path d="M${cx - 8} ${y + 2} q8 -9 16 0" fill="none" stroke="${LINE}" stroke-width="2.6" stroke-linecap="round"/>`;
+  const closedDown = (cx) =>
+    `<path d="M${cx - 8} ${y - 1} q8 8 16 0" fill="none" stroke="${LINE}" stroke-width="2.6" stroke-linecap="round"/>`;
+  const half = (cx) => `
+    <path d="M${cx - 8} ${y - 3} q8 -4 16 0" fill="none" stroke="${LINE}" stroke-width="2.2" stroke-linecap="round"/>
+    <ellipse cx="${cx}" cy="${y + 2}" rx="6.5" ry="5" fill="#fff"/>
+    <circle cx="${cx}" cy="${y + 2}" r="4.2" fill="${LINE}"/>`;
+  const heart = (cx) =>
+    `<path d="M${cx} ${y + 7} c-9 -6 -9 -14 -3.5 -14 c2.4 0 3.5 1.8 3.5 3 c0 -1.2 1.1 -3 3.5 -3 c5.5 0 5.5 8 -3.5 14z" fill="#ff5c8a"/>`;
+
+  switch (expr) {
+    case 'wink':   return open(L) + closedUp(R);
+    case 'laugh':  return closedUp(L) + closedUp(R);
+    case 'shy':    return closedDown(L) + closedDown(R);
+    case 'think':  return half(L) + half(R);
+    case 'love':   return heart(L) + heart(R);
+    default:       return open(L) + open(R);
+  }
+}
+
+function brows(expr) {
+  const s = `fill="none" stroke="${LINE}" stroke-width="2.6" stroke-linecap="round" opacity=".85"`;
+  if (expr === 'think')
+    return `<path d="M74 92 q8 -6 16 -2" ${s}/><path d="M110 90 q8 -4 16 3" ${s}/>`;
+  if (expr === 'shy')
+    return `<path d="M74 93 q8 3 16 1" ${s}/><path d="M110 94 q8 -2 16 -1" ${s}/>`;
+  return `<path d="M74 92 q8 -5 16 -1" ${s}/><path d="M110 91 q8 -4 16 1" ${s}/>`;
+}
+
+function mouth(expr) {
+  const st = `stroke="${LINE}" stroke-width="2.6" stroke-linecap="round" fill="none"`;
+  switch (expr) {
+    case 'laugh':
+      return `<path d="M89 130 q11 13 22 0 z" fill="#c04a63"/>
+              <path d="M92 131 q8 4 16 0" fill="#ff9db3"/>`;
+    case 'shy':   return `<path d="M94 131 q6 4 12 0" ${st}/>`;
+    case 'think': return `<path d="M92 131 q7 -1 14 1" ${st}/>`;
+    case 'love':  return `<path d="M90 129 q10 10 20 0" ${st}/>`;
+    default:      return `<path d="M91 129 q9 8 18 -1" ${st}/>`;
+  }
+}
+
+function accessoryArt(kind) {
+  if (kind === 'glasses')
+    return `<g fill="none" stroke="#2f2440" stroke-width="2.4" opacity=".9">
+      <rect x="70" y="98" width="24" height="20" rx="7"/>
+      <rect x="106" y="98" width="24" height="20" rx="7"/>
+      <path d="M94 106 q6 -3 12 0"/><path d="M70 104 l-8 3"/><path d="M130 104 l8 3"/>
+    </g><rect x="72" y="100" width="20" height="7" rx="4" fill="#fff" opacity=".18"/>
+      <rect x="108" y="100" width="20" height="7" rx="4" fill="#fff" opacity=".18"/>`;
+  if (kind === 'headphones')
+    return `<path d="M56 108 q0 -50 44 -50 q44 0 44 50" fill="none" stroke="#2f2440" stroke-width="7" stroke-linecap="round"/>
+      <rect x="46" y="98" width="19" height="30" rx="9" fill="#ff6b9d"/>
+      <rect x="135" y="98" width="19" height="30" rx="9" fill="#ff6b9d"/>`;
+  if (kind === 'clip')
+    return `<g transform="rotate(-14 132 74)"><rect x="124" y="70" width="18" height="7" rx="3.5" fill="#ffca6b"/>
+      <circle cx="124" cy="73.5" r="4" fill="#ffe1a8"/></g>`;
+  if (kind === 'pencil')
+    return `<g transform="rotate(24 148 96)"><rect x="144" y="70" width="7" height="42" fill="#ffca6b"/>
+      <path d="M144 112 l3.5 8 l3.5 -8z" fill="#f7d5bf"/><rect x="144" y="70" width="7" height="7" fill="#ff6b9d"/></g>`;
+  return '';
+}
+
+/**
+ * Портрет Ники. Один генератор — десяток разных «кадров».
+ */
+function portrait(o = {}) {
+  const {
+    expr = 'smile',
+    bg = ['#3b2a63', '#6d4a8f'],
+    outfit = '#ff6b9d',
+    hair = HAIR,
+    hairHi = HAIR_HI,
+    accessory = null,
+    blush = true,
+    glow = 'rgba(255,255,255,.22)',
+  } = o;
+
+  const g = nextId('g'), s = nextId('s');
+
+  return wrap(`
+    <defs>${bgGrad(g, bg[0], bg[1])}
+      <radialGradient id="${s}" cx=".5" cy=".38" r=".62">
+        <stop offset="0" stop-color="${glow}"/><stop offset="1" stop-color="transparent"/>
+      </radialGradient>
+    </defs>
+    <rect width="200" height="250" fill="url(#${g})"/>
+    <circle cx="100" cy="95" r="96" fill="url(#${s})"/>
+    <circle cx="42" cy="46" r="4" fill="#fff" opacity=".35"/>
+    <circle cx="162" cy="70" r="2.6" fill="#fff" opacity=".28"/>
+    <circle cx="150" cy="34" r="3.2" fill="#fff" opacity=".22"/>
+
+    <!-- волосы сзади -->
+    <path d="M46 118 q-6 66 22 92 h64 q28 -26 22 -92 q-6 -72 -54 -72 q-48 0 -54 72z" fill="${hair}"/>
+    <path d="M60 130 q-4 44 6 74" fill="none" stroke="${hairHi}" stroke-width="6" stroke-linecap="round" opacity=".55"/>
+    <path d="M142 132 q4 42 -6 72" fill="none" stroke="${hairHi}" stroke-width="6" stroke-linecap="round" opacity=".45"/>
+
+    <!-- плечи -->
+    <path d="M52 250 q6 -44 48 -52 q42 8 48 52z" fill="${outfit}"/>
+    <path d="M84 198 q16 12 32 0 q-4 16 -16 18 q-12 -2 -16 -18z" fill="${SKIN}"/>
+    <path d="M52 250 q6 -44 48 -52 q-8 22 -8 52z" fill="#000" opacity=".08"/>
+
+    <!-- шея и голова -->
+    <rect x="90" y="146" width="20" height="24" rx="9" fill="${SKIN_SH}"/>
+    <ellipse cx="100" cy="112" rx="43" ry="47" fill="${SKIN}"/>
+    <ellipse cx="100" cy="126" rx="43" ry="33" fill="${SKIN}"/>
+    <ellipse cx="57" cy="116" rx="6" ry="9" fill="${SKIN_SH}"/>
+    <ellipse cx="143" cy="116" rx="6" ry="9" fill="${SKIN_SH}"/>
+
+    <!-- чёлка -->
+    <path d="M57 108 q0 -50 43 -50 q43 0 43 50 q-10 -26 -30 -30 q-8 14 -30 12 q-18 -2 -26 18z" fill="${hair}"/>
+    <path d="M74 68 q18 -8 34 2" fill="none" stroke="${hairHi}" stroke-width="5" stroke-linecap="round" opacity=".5"/>
+
+    ${brows(expr)}
+    ${eyes(expr)}
+    <path d="M99 118 q3 3 -1 5" fill="none" stroke="${SKIN_SH}" stroke-width="2" stroke-linecap="round"/>
+    ${mouth(expr)}
+    ${blush ? `<ellipse cx="72" cy="124" rx="9" ry="5.5" fill="#ff8fae" opacity=".45"/>
+               <ellipse cx="128" cy="124" rx="9" ry="5.5" fill="#ff8fae" opacity=".45"/>` : ''}
+    ${accessory ? accessoryArt(accessory) : ''}
+  `);
+}
+
+/* ─────────────────────────── Сцены ─────────────────────────── */
+
+function sceneDesk() {
+  const g = nextId('g');
+  return wrap(`
+    <defs>${bgGrad(g, '#241a3e', '#3c2a52')}</defs>
+    <rect width="200" height="250" fill="url(#${g})"/>
+    <ellipse cx="128" cy="86" rx="72" ry="60" fill="#ffca6b" opacity=".16"/>
+    <rect x="0" y="176" width="200" height="74" fill="#5a3f2e"/>
+    <rect x="0" y="176" width="200" height="6" fill="#7a5740"/>
+    <g transform="translate(112 44)">
+      <path d="M0 0 h44 l-10 30 h-24z" fill="#ffca6b"/>
+      <path d="M6 30 h32 l-2 5 h-28z" fill="#e0a94f"/>
+      <rect x="20" y="34" width="4" height="128" fill="#3a2b48"/>
+      <rect x="2" y="160" width="40" height="7" rx="3" fill="#3a2b48"/>
+      <ellipse cx="22" cy="52" rx="34" ry="18" fill="#ffe6ae" opacity=".22"/>
+    </g>
+    <g transform="rotate(-6 60 170)">
+      <rect x="18" y="128" width="86" height="52" rx="4" fill="#fdf6ea"/>
+      <rect x="18" y="128" width="86" height="52" rx="4" fill="none" stroke="#d8c9b4"/>
+      ${[0, 1, 2, 3, 4].map((i) => `<rect x="26" y="${138 + i * 9}" width="${68 - (i % 2) * 22}" height="2.4" rx="1.2" fill="#c3b6cf"/>`).join('')}
+      <text x="27" y="174" font-family="monospace" font-size="12" fill="#b06dff">∫ f(x)dx</text>
+    </g>
+    <g transform="translate(150 148)">
+      <path d="M0 0 h26 v22 a13 13 0 0 1 -26 0z" fill="#fff"/>
+      <path d="M26 4 a8 8 0 0 1 0 14" fill="none" stroke="#fff" stroke-width="3"/>
+      <ellipse cx="13" cy="1" rx="13" ry="4" fill="#8a5a3c"/>
+      <path d="M8 -6 c5 -5 -5 -9 0 -14" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" opacity=".45"/>
+      <path d="M17 -6 c5 -5 -5 -9 0 -14" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" opacity=".3"/>
+    </g>
+    <circle cx="30" cy="40" r="2.5" fill="#fff" opacity=".3"/>
+  `);
+}
+
+function sceneCat() {
+  const g = nextId('g');
+  return wrap(`
+    <defs>${bgGrad(g, '#2b2047', '#4a3268')}</defs>
+    <rect width="200" height="250" fill="url(#${g})"/>
+    <ellipse cx="100" cy="120" rx="86" ry="76" fill="#ff6b9d" opacity=".10"/>
+    <g transform="rotate(4 100 196)">
+      <rect x="24" y="176" width="152" height="40" rx="5" fill="#fdf6ea"/>
+      <rect x="24" y="176" width="152" height="40" rx="5" fill="none" stroke="#d8c9b4"/>
+      ${[0, 1, 2].map((i) => `<rect x="34" y="${186 + i * 10}" width="${120 - i * 30}" height="2.4" rx="1.2" fill="#c9bcd6"/>`).join('')}
+    </g>
+    <g transform="translate(100 140)">
+      <ellipse cx="0" cy="34" rx="56" ry="30" fill="#3a3048"/>
+      <ellipse cx="0" cy="30" rx="54" ry="28" fill="#5c5170"/>
+      <path d="M-52 32 q-16 4 -20 -8 q-2 -8 8 -6 q8 2 12 8z" fill="#5c5170"/>
+      <circle cx="24" cy="4" r="27" fill="#5c5170"/>
+      <path d="M4 -14 l-3 -20 l19 11z" fill="#5c5170"/>
+      <path d="M44 -14 l7 -19 l-17 9z" fill="#5c5170"/>
+      <path d="M6 -13 l-1 -12 l11 7z" fill="#ff9db3"/>
+      <path d="M43 -13 l4 -11 l-10 5z" fill="#ff9db3"/>
+      <path d="M12 2 q6 -5 12 0" fill="none" stroke="#241c33" stroke-width="2.6" stroke-linecap="round"/>
+      <path d="M30 2 q6 -5 12 0" fill="none" stroke="#241c33" stroke-width="2.6" stroke-linecap="round"/>
+      <path d="M23 12 l4 3 l4 -3z" fill="#ff9db3"/>
+      <path d="M27 15 q-4 6 -8 2 M27 15 q4 6 8 2" fill="none" stroke="#241c33" stroke-width="1.8" stroke-linecap="round"/>
+      <g stroke="#e6dff2" stroke-width="1.4" opacity=".8">
+        <path d="M8 12 l-16 -3"/><path d="M8 16 l-16 4"/><path d="M46 12 l16 -3"/><path d="M46 16 l16 4"/>
+      </g>
+      <ellipse cx="-14" cy="42" rx="12" ry="8" fill="#6d6184"/>
+    </g>
+    <text x="100" y="52" text-anchor="middle" font-size="26" opacity=".55">💤</text>
+  `);
+}
+
+function sceneWindow() {
+  const g = nextId('g'), s = nextId('s');
+  return wrap(`
+    <defs>${bgGrad(g, '#1d1533', '#2c1f45')}
+      <linearGradient id="${s}" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#5b3f8f"/><stop offset=".42" stop-color="#e0668c"/>
+        <stop offset=".72" stop-color="#ff9d6b"/><stop offset="1" stop-color="#ffd9a0"/>
+      </linearGradient>
+    </defs>
+    <rect width="200" height="250" fill="url(#${g})"/>
+    <rect x="22" y="26" width="156" height="180" rx="10" fill="url(#${s})"/>
+    <circle cx="120" cy="132" r="24" fill="#fff6d8" opacity=".92"/>
+    <circle cx="120" cy="132" r="40" fill="#fff0c8" opacity=".18"/>
+    <path d="M22 168 h156 v38 a10 10 0 0 1 -10 10 H32 a10 10 0 0 1 -10 -10z" fill="#7a4a6e" opacity=".55"/>
+    ${[0, 1, 2].map((i) => `<rect x="${34 + i * 46}" y="${150 + i * 6}" width="34" height="5" rx="2.5" fill="#43305e" opacity=".5"/>`).join('')}
+    <rect x="94" y="26" width="7" height="180" fill="#2a1f3d"/>
+    <rect x="22" y="112" width="156" height="7" fill="#2a1f3d"/>
+    <rect x="18" y="22" width="164" height="188" rx="12" fill="none" stroke="#2a1f3d" stroke-width="9"/>
+    <rect x="8" y="206" width="184" height="12" rx="4" fill="#38284f"/>
+    <g transform="translate(148 168)">
+      <path d="M0 38 h26 l-4 -26 h-18z" fill="#c2705a"/>
+      <path d="M13 12 q-16 -6 -14 -22 q14 2 14 22z" fill="#63c99a"/>
+      <path d="M13 12 q16 -8 14 -24 q-14 4 -14 24z" fill="#4fae83"/>
+      <path d="M13 12 q2 -18 0 -26" fill="none" stroke="#3d8f6a" stroke-width="2"/>
+    </g>
+    <g transform="translate(30 172)">
+      <path d="M0 34 h22 v-4 a11 11 0 0 0 -22 0z" fill="#fff" opacity=".9"/>
+      <ellipse cx="11" cy="30" rx="11" ry="3.5" fill="#c98a5e"/>
+    </g>
+  `);
+}
+
+function sceneCity() {
+  const g = nextId('g');
+  const win = [];
+  for (let i = 0; i < 68; i++) {
+    const x = 12 + ((i * 37) % 176), y = 118 + ((i * 53) % 108);
+    if (y > 236) continue;
+    win.push(`<rect x="${x}" y="${y}" width="4" height="5" fill="#ffd98a" opacity="${0.25 + ((i * 7) % 10) / 14}"/>`);
+  }
+  return wrap(`
+    <defs>${bgGrad(g, '#080a1e', '#241a44')}</defs>
+    <rect width="200" height="250" fill="url(#${g})"/>
+    <circle cx="150" cy="48" r="20" fill="#fff4d6"/>
+    <circle cx="142" cy="42" r="19" fill="#0c0e24"/>
+    ${Array.from({ length: 46 }, (_, i) => {
+      const x = (i * 61) % 200, y = (i * 29) % 112, r = 0.6 + ((i * 3) % 5) / 4;
+      return `<circle cx="${x}" cy="${y}" r="${r}" fill="#fff" opacity="${0.3 + ((i * 5) % 7) / 12}"/>`;
+    }).join('')}
+    <path d="M0 150 l24 -18 l22 14 l20 -26 l26 18 l22 -12 l26 20 l22 -10 l38 22 v92 H0z" fill="#150f2e"/>
+    <g>
+      <rect x="10" y="132" width="34" height="118" fill="#1d1638"/>
+      <rect x="52" y="152" width="28" height="98" fill="#231b42"/>
+      <rect x="88" y="116" width="30" height="134" fill="#1a1434"/>
+      <rect x="126" y="146" width="26" height="104" fill="#241c46"/>
+      <rect x="160" y="126" width="32" height="124" fill="#1d1638"/>
+    </g>
+    ${win.join('')}
+    <rect x="0" y="228" width="200" height="22" fill="#0e0a1e"/>
+    <g stroke="#3a2f5c" stroke-width="3" fill="none">
+      <path d="M0 228 h200"/>
+      ${Array.from({ length: 11 }, (_, i) => `<path d="M${8 + i * 19} 228 v22"/>`).join('')}
+    </g>
+    <ellipse cx="100" cy="246" rx="90" ry="14" fill="#ff6b9d" opacity=".08"/>
+  `);
+}
+
+function sceneCoffee() {
+  const g = nextId('g');
+  return wrap(`
+    <defs>${bgGrad(g, '#3a2a2a', '#5c4038')}</defs>
+    <rect width="200" height="250" fill="url(#${g})"/>
+    <rect x="0" y="0" width="200" height="250" fill="#6b4a3c" opacity=".25"/>
+    <ellipse cx="104" cy="128" rx="86" ry="86" fill="#2b1f1c" opacity=".3"/>
+    <circle cx="100" cy="122" r="80" fill="#f4ece2"/>
+    <circle cx="100" cy="122" r="70" fill="#c98d5e"/>
+    <circle cx="100" cy="122" r="70" fill="none" stroke="#b3794c" stroke-width="3"/>
+    <path d="M100 156 c-30 -20 -30 -46 -12 -46 c8 0 12 6 12 10 c0 -4 4 -10 12 -10 c18 0 18 26 -12 46z" fill="#fdf6ea" opacity=".92"/>
+    <path d="M100 78 q-16 8 -14 22" fill="none" stroke="#fdf6ea" stroke-width="3" opacity=".5" stroke-linecap="round"/>
+    <ellipse cx="76" cy="96" rx="14" ry="9" fill="#fff" opacity=".16"/>
+    <g transform="translate(150 190) rotate(24)">
+      <rect x="0" y="0" width="9" height="46" rx="4" fill="#d8cfc2"/>
+      <ellipse cx="4.5" cy="-6" rx="9" ry="12" fill="#d8cfc2"/>
+    </g>
+    <g transform="translate(16 190) rotate(-8)">
+      <rect x="0" y="0" width="52" height="34" rx="3" fill="#fdf6ea"/>
+      <rect x="6" y="7" width="34" height="2.4" rx="1.2" fill="#c9bcd6"/>
+      <rect x="6" y="14" width="24" height="2.4" rx="1.2" fill="#c9bcd6"/>
+      <text x="6" y="29" font-family="monospace" font-size="10" fill="#ff6b9d">x=2</text>
+    </g>
+  `);
+}
+
+function sceneNotes() {
+  const g = nextId('g');
+  return wrap(`
+    <defs>${bgGrad(g, '#1f2a44', '#31456b')}</defs>
+    <rect width="200" height="250" fill="url(#${g})"/>
+    <g transform="rotate(-4 100 125)">
+      <rect x="18" y="24" width="164" height="202" rx="8" fill="#fdfaf3"/>
+      <rect x="18" y="24" width="164" height="202" rx="8" fill="none" stroke="#ddd2c2"/>
+      <rect x="40" y="24" width="2" height="202" fill="#ffb3c4"/>
+      ${Array.from({ length: 12 }, (_, i) => `<rect x="50" y="${48 + i * 15}" width="118" height="1.4" fill="#dfe6f0"/>`).join('')}
+      <text x="52" y="62" font-family="monospace" font-size="15" fill="#3b3357">lim (1+1/n)ⁿ</text>
+      <text x="86" y="76" font-family="monospace" font-size="10" fill="#8a7fa8">n→∞</text>
+      <text x="52" y="100" font-family="monospace" font-size="15" fill="#3b3357">= e ≈ 2.718</text>
+      <text x="52" y="132" font-family="monospace" font-size="15" fill="#3b3357">∂/∂x (x²) = 2x</text>
+      <path d="M52 142 h96" stroke="#ff6b9d" stroke-width="2.4" stroke-linecap="round"/>
+      <text x="52" y="170" font-family="monospace" font-size="14" fill="#b06dff">спасибо ♥</text>
+      <g transform="translate(126 176) rotate(-12)">
+        <path d="M14 26 c-14 -10 -14 -22 -5.5 -22 c3.6 0 5.5 2.8 5.5 4.6 c0 -1.8 1.9 -4.6 5.5 -4.6 c8.5 0 8.5 12 -5.5 22z" fill="#ff6b9d" opacity=".85"/>
+      </g>
+    </g>
+    <circle cx="176" cy="34" r="7" fill="#ffca6b"/>
+  `);
+}
+
+/* Маленькая аватарка для шапки и ленты.
+   Кэшируем по выражению: в ленте их десятки, а разметка одинаковая. */
+const avatarCache = new Map();
+function avatar(expr = 'smile') {
+  if (!avatarCache.has(expr)) {
+    avatarCache.set(expr, portrait({ expr, bg: ['#6d4a8f', '#ff6b9d'], blush: true }));
+  }
+  return avatarCache.get(expr);
+}
+
+return { portrait, sceneDesk, sceneCat, sceneWindow, sceneCity, sceneCoffee, sceneNotes, avatar };
+})();
+
+__m.story = (() => {
+/**
+ * Сценарий. Шесть глав — примерно на 25 минут первой сессии,
+ * каждая заканчивается крючком «продолжение завтра… или прямо сейчас».
+ *
+ * Типы шагов:
+ *   sys    — служебная плашка в ленте
+ *   msg    — сообщение Ники (e — выражение лица для аватарки)
+ *   me     — реплика игрока без выбора
+ *   choice — выбор реплики: aff — сколько симпатии, reply — её ответ
+ *   math   — пример; topic/d необязательны (иначе берётся по уровню)
+ *   photo  — она присылает фото (id из gallery.js)
+ *   end    — конец главы
+ */
+
+const CHAPTERS = [
+  {
+    title: 'Ты же говорил, что шаришь',
+    steps: [
+      { t: 'sys', x: 'Глава 1 · Знакомство' },
+      { t: 'msg', x: 'привет', e: 'smile' },
+      { t: 'msg', x: 'ты в анкете написал «в математике шарю». это правда или чтобы понтануться?', e: 'think' },
+      { t: 'choice', opts: [
+        { x: 'Правда. Проверяй.', aff: 6, reply: 'опасное заявление. проверяю' },
+        { x: 'Чтобы понтануться, но я стараюсь', aff: 8, reply: 'ха, честно. это я уважаю' },
+        { x: 'А ты кто?', aff: 2, reply: 'ника. первый курс. паникую' },
+      ] },
+      { t: 'msg', x: 'короче. у меня через неделю экзамен, а я не понимаю НИЧЕГО', e: 'shy' },
+      { t: 'msg', x: 'вот прям с самого начала не понимаю. смотри' },
+      { t: 'math', topic: 'arith', d: 1, aff: 8, intro: 'это же элементарно, да? а я туплю', good: 'блин. ну да. я реально туплю', bad: 'ага, значит не только я тут страдаю' },
+      { t: 'msg', x: 'ладно, ты не безнадёжен' },
+      { t: 'msg', x: 'покажу где происходит вся эта боль', e: 'smile' },
+      { t: 'photo', id: 'desk', pre: 'мой алтарь страданий' },
+      { t: 'choice', opts: [
+        { x: 'Уютно, кстати', aff: 7, reply: 'да? спасибо. я лампу неделю выбирала' },
+        { x: 'Тут кто-то явно не спал', aff: 5, reply: 'три ночи. считай, я уже призрак' },
+      ] },
+      { t: 'math', topic: 'percent', d: 1, aff: 9, intro: 'ещё одно, и я отстану. честно-честно', good: 'окей, ты не врал в анкете', bad: 'вот и я так же решила. и вот я тут' },
+      { t: 'msg', x: 'слушай, спасибо. правда', e: 'smile' },
+      { t: 'msg', x: 'держи, за помощь', e: 'wink' },
+      { t: 'photo', id: 'glasses', pre: 'я в очках, когда учусь. только не смейся' },
+      { t: 'msg', x: 'ВСЁ. я сказала не смеяться' },
+      { t: 'end', x: 'завтра будет хуже: дроби' },
+    ],
+  },
+
+  {
+    title: 'Дроби и кот',
+    steps: [
+      { t: 'sys', x: 'Глава 2 · На следующий день' },
+      { t: 'msg', x: 'ты здесь? у меня ЧП', e: 'think' },
+      { t: 'msg', x: 'кот сел на конспект и не встаёт' },
+      { t: 'photo', id: 'cat', pre: 'вот, полюбуйся' },
+      { t: 'choice', opts: [
+        { x: 'Как зовут?', aff: 7, reply: 'Пифагор. да, я знаю, как это звучит' },
+        { x: 'Он прав, конспект переоценён', aff: 6, reply: 'не подначивай его, он и так наглый' },
+        { x: 'Сдвинь его и работай', aff: 3, reply: 'ты его не двигал. это как двигать гору' },
+      ] },
+      { t: 'msg', x: 'ладно, я переписала на другой лист. смотри что не сходится' },
+      { t: 'math', topic: 'fraction', d: 2, aff: 10, intro: 'дроби. ненавижу дроби', good: 'ОБЩИЙ ЗНАМЕНАТЕЛЬ. точно. я тупая', bad: 'фух, не только я. полегчало' },
+      { t: 'msg', x: 'слушай, а ты почему вообще отвечаешь? тебе не лень?' },
+      { t: 'choice', opts: [
+        { x: 'Мне нравится объяснять', aff: 8, reply: 'редкий вид. занесу в красную книгу' },
+        { x: 'Мне нравишься ты', aff: 10, reply: '...' , then: 'так, стоп. мы решаем дроби' },
+        { x: 'Просто скучно', aff: 2, reply: 'ауч. ну ок, честно' },
+      ] },
+      { t: 'math', topic: 'linear', d: 2, aff: 10, intro: 'вот это я вроде поняла. проверь меня', good: 'ДА. я поняла. я реально поняла', bad: 'ага. значит не поняла' },
+      { t: 'msg', x: 'смотри что у меня получилось', e: 'smile' },
+      { t: 'photo', id: 'notes', pre: 'красиво же' },
+      { t: 'msg', x: 'ты первый человек, с кем математика не бесит' },
+      { t: 'end', x: 'спокойной ночи. завтра степени, готовься' },
+    ],
+  },
+
+  {
+    title: 'Кофе в два ночи',
+    steps: [
+      { t: 'sys', x: 'Глава 3 · 02:14' },
+      { t: 'msg', x: 'спишь?', e: 'think' },
+      { t: 'msg', x: 'ладно, глупый вопрос, ты же ответил' },
+      { t: 'photo', id: 'coffee', pre: 'третья за вечер. я умру, но сдам' },
+      { t: 'choice', opts: [
+        { x: 'Иди спать, серьёзно', aff: 9, reply: 'нет. но приятно, что переживаешь' },
+        { x: 'Наливай четвёртую', aff: 5, reply: 'вот это дух! (мне плохо)' },
+      ] },
+      { t: 'math', topic: 'power', d: 2, aff: 11, intro: 'степени. объясни как будто мне пять', good: 'о! складываются! почему мне так никто не сказал', bad: 'вот и препод так же махнул рукой' },
+      { t: 'msg', x: 'кстати я загуглила твоё имя' },
+      { t: 'choice', opts: [
+        { x: 'И как, страшно?', aff: 8, reply: 'нет. подозрительно нормально' },
+        { x: 'Это уже сталкинг', aff: 7, reply: 'это ресёрч! я же будущий учёный' },
+      ] },
+      { t: 'math', topic: 'quadratic', d: 3, aff: 12, intro: 'а теперь ЭТО. я боюсь квадратных', good: 'виет! красиво. ты красиво объясняешь', bad: 'ой. окей, значит завтра ещё раз' },
+      { t: 'msg', x: 'ты сейчас так глупо пошутил, что я разбудила соседку', e: 'laugh' },
+      { t: 'photo', id: 'laugh', pre: 'вот. это твоя вина' },
+      { t: 'end', x: 'всё, я сплю. правда сплю' },
+    ],
+  },
+
+  {
+    title: 'Закат',
+    steps: [
+      { t: 'sys', x: 'Глава 4 · Через день' },
+      { t: 'msg', x: 'я вышла на улицу. первый раз за неделю', e: 'smile' },
+      { t: 'msg', x: 'мир, оказывается, ещё существует' },
+      { t: 'photo', id: 'window', pre: 'закат. специально для тебя сфоткала' },
+      { t: 'choice', opts: [
+        { x: 'Красиво. Спасибо', aff: 9, reply: 'пожалуйста ♥' },
+        { x: 'Ты красивее', aff: 11, reply: 'так. это нечестный приём', then: 'но окей. записала' },
+        { x: 'Возвращайся к прогрессиям', aff: 4, reply: 'ты вообще романтик, конечно' },
+      ] },
+      { t: 'math', topic: 'progression', d: 3, aff: 12, intro: 'ладно, прогрессии. они хотя бы логичные', good: 'формула сама себя объясняет. люблю такое', bad: 'аккуратнее, там n минус один' },
+      { t: 'msg', x: 'можно личный вопрос' },
+      { t: 'msg', x: 'ты бы стал ждать человека, который пишет только когда ему нужна помощь?', e: 'shy' },
+      { t: 'choice', opts: [
+        { x: 'Ты пишешь не только поэтому', aff: 12, reply: 'откуда ты знаешь' },
+        { x: 'Смотря какой человек', aff: 8, reply: 'дипломатично. засчитано' },
+        { x: 'Нет', aff: 4, reply: 'честно. неприятно, но честно' },
+      ] },
+      { t: 'photo', id: 'think', pre: 'вот моё лицо, когда я думаю над твоим ответом' },
+      { t: 'math', topic: 'combi', d: 3, aff: 13, intro: 'отвлеки меня. дай что-нибудь сложное', good: 'факториалы это законно вообще?', bad: 'не туда. но мне нравится ход мысли' },
+      { t: 'end', x: 'через два дня экзамен. страшно' },
+    ],
+  },
+
+  {
+    title: 'Ночь перед экзаменом',
+    steps: [
+      { t: 'sys', x: 'Глава 5 · 03:40' },
+      { t: 'photo', id: 'city', pre: 'не сплю. и ты не спи' },
+      { t: 'msg', x: 'производные. последний рубеж', e: 'think' },
+      { t: 'math', topic: 'derivative', d: 4, aff: 14, intro: 'если я это пойму — я сдам', good: 'СТЕПЕНЬ ВНИЗ И МИНУС ОДИН. всё, я запомнила', bad: 'нет-нет, коэффициент умножается на степень' },
+      { t: 'msg', x: 'а если я завалю?' },
+      { t: 'choice', opts: [
+        { x: 'Не завалишь. Ты уже поняла', aff: 13, reply: 'скажи ещё раз' },
+        { x: 'Пересдача — тоже вариант', aff: 5, reply: 'спасибо, очень поддержал' },
+        { x: 'Тогда я приду ругаться с преподом', aff: 12, reply: 'представила. смешно и мило' },
+      ] },
+      { t: 'math', topic: 'integral', d: 4, aff: 15, intro: 'интегралы это производные наоборот, да? скажи да', good: 'ДА! я угадала! ну то есть поняла', bad: 'плюс це не забываем, слышишь' },
+      { t: 'msg', x: 'слушай' },
+      { t: 'msg', x: 'я тут подумала, что за неделю ты стал человеком, которому я пишу первой', e: 'shy' },
+      { t: 'msg', x: 'это странно, потому что я тебя даже не видела вживую' },
+      { t: 'choice', opts: [
+        { x: 'Так давай увидимся', aff: 15, reply: 'после экзамена. обещаю' },
+        { x: 'Мне тоже странно. В хорошем смысле', aff: 12, reply: 'в хорошем смысле — это лучшее, что я слышала сегодня' },
+      ] },
+      { t: 'photo', id: 'shy', pre: 'ладно. вот. удаляй сразу, поняла?' },
+      { t: 'end', x: 'всё. иду сдавать. пожелай удачи' },
+    ],
+  },
+
+  {
+    title: 'Формула сошлась',
+    steps: [
+      { t: 'sys', x: 'Глава 6 · Через 6 часов' },
+      { t: 'msg', x: 'ЧЕТЫРЕ', e: 'laugh' },
+      { t: 'msg', x: 'ЧЕТЫРЕ!!! ТЫ ПОНИМАЕШЬ' },
+      { t: 'photo', id: 'exam', pre: 'это всё ты' },
+      { t: 'choice', opts: [
+        { x: 'Это всё ты. Я только объяснял', aff: 14, reply: 'не отнимай у меня возможность сказать спасибо' },
+        { x: 'Я знал', aff: 10, reply: 'а я нет! я рыдала в коридоре' },
+      ] },
+      { t: 'msg', x: 'последний пример. на удачу', e: 'wink' },
+      { t: 'math', topic: 'limit', d: 4, aff: 16, intro: 'предел. как символ, что всё закончилось', good: 'идеально. как и вся эта неделя', bad: 'мимо, но мне уже всё равно ♥' },
+      { t: 'msg', x: 'у меня к тебе предложение' },
+      { t: 'msg', x: 'кофе. завтра. без конспектов', e: 'shy' },
+      { t: 'choice', opts: [
+        { x: 'Заеду за тобой в семь', aff: 20, reply: 'в семь. и не опаздывай, я нервная' },
+        { x: 'Только если возьмём Пифагора', aff: 16, reply: 'он будет третьим лишним, но ладно' },
+      ] },
+      { t: 'photo', id: 'love', pre: 'спасибо, что не бросил меня с этими дробями' },
+      { t: 'msg', x: 'формула сошлась ♥' },
+      { t: 'end', x: 'история пройдена — но Ника ещё пишет' },
+    ],
+  },
+];
+
+/** Реплики Ники в бесконечном марафоне (после сюжета). */
+const MARATHON = {
+  intro: [
+    'кину пример, чтобы ты не расслаблялся',
+    'я теперь сама придумываю задачи. бойся',
+    'проверка: ты ещё шаришь?',
+    'мне скучно. решай',
+    'последний. честное слово. (нет)',
+  ],
+  good: ['ну ты и зануда (люблю)', 'без ошибок. подозрительно', 'красиво', 'ок, ты всё ещё шаришь', 'ещё?'],
+  bad: ['ага! попался', 'ха! теперь я объясняю', 'ошибся. это даже мило', 'не расстраивайся, дальше проще'],
+};
+
+/** Реплики для челленджа дня. */
+const DAILY = {
+  intro: 'челлендж дня. у всех сегодня одинаковые примеры — можешь спорить с друзьями',
+  done: 'на сегодня всё. приходи завтра, будет новый',
+  win: (n) => `${n} из 5. записала в блокнотик`,
+};
+
+return { CHAPTERS, MARATHON, DAILY };
+})();
+
+__m.audio = (() => {
+/** Звук синтезируется на лету — ни одного аудиофайла в сборке. */
+
+const { S, save } = __m.state;
+let ctx = null;
+let master = null;
+
+function ac() {
+  if (ctx) return ctx;
+  const AC = window.AudioContext || window.webkitAudioContext;
+  if (!AC) return null;
+  ctx = new AC();
+  master = ctx.createGain();
+  master.gain.value = 0.22;
+  master.connect(ctx.destination);
+  return ctx;
+}
+
+/** iOS/Android разрешают звук только после жеста — дёргаем из первого тапа. */
+function unlockAudio() {
+  const c = ac();
+  if (c && c.state === 'suspended') c.resume();
+}
+
+function setMuted(v) {
+  S.muted = v;
+  save();
+  if (master) master.gain.value = v ? 0 : 0.22;
+}
+
+function tone(freq, { dur = 0.18, type = 'sine', at = 0, gain = 1, slide = 0 } = {}) {
+  const c = ac();
+  if (!c || S.muted) return;
+  const t0 = c.currentTime + at;
+  const osc = c.createOscillator();
+  const g = c.createGain();
+  osc.type = type;
+  osc.frequency.setValueAtTime(freq, t0);
+  if (slide) osc.frequency.exponentialRampToValueAtTime(Math.max(40, freq + slide), t0 + dur);
+  g.gain.setValueAtTime(0.0001, t0);
+  g.gain.exponentialRampToValueAtTime(0.9 * gain, t0 + 0.012);
+  g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+  osc.connect(g).connect(master);
+  osc.start(t0);
+  osc.stop(t0 + dur + 0.05);
+}
+
+/** Пентатоника: любые сочетания звучат приятно, что бы игрок ни нажал. */
+const PENTA = [523.25, 587.33, 698.46, 783.99, 880.0, 1046.5, 1174.66, 1396.91];
+
+const sfx = {
+  /** Пришло сообщение — мягкий «блуп». */
+  msg: () => tone(430, { dur: 0.1, type: 'sine', gain: 0.55, slide: 120 }),
+  /** Игрок отправил реплику. */
+  send: () => tone(660, { dur: 0.08, type: 'triangle', gain: 0.5, slide: 180 }),
+  /** Верный ответ: с ростом серии нота уходит выше — «ещё один» само просится. */
+  right(streak = 0) {
+    const i = Math.min(PENTA.length - 1, streak);
+    tone(PENTA[i], { dur: 0.16, type: 'triangle' });
+    tone(PENTA[i] * 1.5, { dur: 0.22, type: 'sine', at: 0.07, gain: 0.6 });
+  },
+  wrong: () => {
+    tone(196, { dur: 0.16, type: 'sawtooth', gain: 0.35 });
+    tone(146, { dur: 0.24, type: 'sine', at: 0.08, gain: 0.4 });
+  },
+  photo: () => {
+    tone(880, { dur: 0.1, type: 'sine', gain: 0.5 });
+    tone(1318, { dur: 0.16, type: 'sine', at: 0.06, gain: 0.4 });
+    tone(1760, { dur: 0.3, type: 'sine', at: 0.12, gain: 0.3 });
+  },
+  level: () => [0, 0.1, 0.2, 0.34].forEach((at, i) =>
+    tone([523.25, 659.25, 783.99, 1046.5][i], { dur: 0.42, type: 'triangle', at, gain: 0.7 })),
+  tap: () => tone(320, { dur: 0.05, type: 'sine', gain: 0.3 }),
+};
+
+return { unlockAudio, setMuted, sfx };
+})();
+
+__m.gallery = (() => {
+/** Каталог «фото» Ники: то, ради чего игрок возвращается и добивает главы. */
+
+const art = __m.art;
+const { S, hasPhoto, markSeen } = __m.state;
+const PHOTOS = [
+  { id: 'desk',    title: 'Рабочее место',  cap: 'вот тут я и страдаю',            hint: 'глава 1',  art: art.sceneDesk },
+  { id: 'glasses', title: 'В очках',        cap: 'только не смейся',               hint: 'глава 1',  art: () => art.portrait({ expr: 'wink', accessory: 'glasses', bg: ['#4a2f75', '#8f5bb5'], outfit: '#7aa7ff' }) },
+  { id: 'notes',   title: 'Конспект',       cap: 'смотри, я всё записала',         hint: 'глава 2',  art: art.sceneNotes },
+  { id: 'cat',     title: 'Пифагор',        cap: 'он мешает мне учиться',          hint: 'глава 2',  art: art.sceneCat },
+  { id: 'coffee',  title: 'Топливо',        cap: 'третья за вечер',                hint: 'глава 3',  art: art.sceneCoffee },
+  { id: 'laugh',   title: 'Смешно',         cap: 'ты меня рассмешил, вот',         hint: 'глава 3',  art: () => art.portrait({ expr: 'laugh', accessory: 'headphones', bg: ['#7a3d63', '#ff9d6b'], outfit: '#ffca6b' }) },
+  { id: 'window',  title: 'Закат',          cap: 'из моего окна, специально тебе', hint: 'глава 4',  art: art.sceneWindow },
+  { id: 'think',   title: 'Думаю',          cap: 'думаю над твоим вопросом',       hint: 'глава 4',  art: () => art.portrait({ expr: 'think', accessory: 'pencil', bg: ['#2f3f6e', '#5e7fb5'], outfit: '#a1b7e8' }) },
+  { id: 'city',    title: 'Ночь перед экз', cap: 'не сплю. и ты не спи',           hint: 'глава 5',  art: art.sceneCity },
+  { id: 'shy',     title: 'Ну ладно',       cap: 'удаляй сразу, поняла?',          hint: 'глава 5',  art: () => art.portrait({ expr: 'shy', accessory: 'clip', bg: ['#8f4a6e', '#ff8fae'], outfit: '#ffd9e2' }) },
+  { id: 'exam',    title: 'СДАЛА',          cap: 'ЧЕТЫРЕ!!! это всё ты',           hint: 'глава 6',  art: () => art.portrait({ expr: 'laugh', bg: ['#2f7a63', '#8fe0b5'], outfit: '#ffca6b', accessory: 'clip' }) },
+  { id: 'love',    title: 'Для тебя',       cap: 'формула сошлась ♥',              hint: 'финал',    art: () => art.portrait({ expr: 'love', bg: ['#a03a6e', '#ff9db3'], outfit: '#ff6b9d', glow: 'rgba(255,220,235,.4)' }) },
+];
+
+const byId = (id) => PHOTOS.find((p) => p.id === id);
+
+const LOCK = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round">
+  <rect x="4.5" y="10.5" width="15" height="10.5" rx="2.5"/><path d="M8 10.5V7.8a4 4 0 0 1 8 0v2.7"/></svg>`;
+
+/** Отрисовать сетку коллекции. */
+function renderGallery(gridEl, countEl, onOpen) {
+  const opened = PHOTOS.filter((p) => hasPhoto(p.id)).length;
+  countEl.textContent = `${opened} / ${PHOTOS.length}`;
+
+  gridEl.innerHTML = '';
+  PHOTOS.forEach((p, i) => {
+    const el = document.createElement('div');
+    el.style.animationDelay = `${Math.min(i, 8) * 26}ms`;
+
+    if (hasPhoto(p.id)) {
+      el.className = 'card' + (S.fresh.includes(p.id) ? ' fresh' : '');
+      el.innerHTML = `<div class="frame">${p.art()}</div><div class="cap">${p.title}</div>`;
+      el.onclick = () => { markSeen(p.id); onOpen(p); };
+    } else {
+      el.className = 'card locked';
+      el.innerHTML = `<div class="frame">${LOCK}</div><div class="cap">${p.hint}</div>`;
+    }
+    gridEl.appendChild(el);
+  });
+}
+
+return { PHOTOS, byId, renderGallery };
+})();
+
+__m.chat = (() => {
+/**
+ * Движок переписки: последовательно проигрывает сценарий, вставляет примеры,
+ * выдаёт фото и начисляет симпатию. Каждый интерактивный шаг — это await
+ * промиса, который резолвится тапом игрока, поэтому вся логика читается сверху вниз.
+ */
+
+const { S, save, pushLog, addAffection, levelInfo, markCorrect, markWrong, unlockPhoto, dailyDone, finishDaily, todaySeed } = __m.state;
+const { makeProblem, topicsForLevel, useRandom, seededRandom } = __m.math;
+const { CHAPTERS, MARATHON, DAILY } = __m.story;
+const { byId } = __m.gallery;
+const { avatar } = __m.art;
+const { sfx } = __m.audio;
+let el = {};
+let hooks = {};
+let running = false;
+
+const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+const pick = (a) => a[Math.floor(Math.random() * a.length)];
+
+function initChat(dom, cbs) {
+  el = dom;
+  hooks = cbs;
+  setAvatar('smile');
+  updateAff();
+  restoreLog();
+}
+
+/* ─────────────── примитивы ленты ─────────────── */
+
+function scroll() {
+  requestAnimationFrame(() => { el.thread.scrollTop = el.thread.scrollHeight; });
+}
+
+function addRow(html, who, animate = true) {
+  const row = document.createElement('div');
+  row.className = 'row' + (who === 'me' ? ' me' : '');
+  if (!animate) row.style.animation = 'none';
+  row.innerHTML = (who === 'me' ? '' : `<div class="mini">${avatar(lastExpr)}</div>`) + html;
+
+  // как в настоящем мессенджере: аватарка только у последней реплики в серии
+  if (who !== 'me') {
+    const prev = el.thread.lastElementChild;
+    if (prev?.classList.contains('row') && !prev.classList.contains('me')) prev.classList.add('tail');
+  }
+
+  el.thread.appendChild(row);
+  scroll();
+  return row;
+}
+
+function addSys(text, animate = true) {
+  const b = document.createElement('div');
+  b.className = 'bubble sys';
+  b.textContent = text;
+  if (!animate) b.style.animation = 'none';
+  el.thread.appendChild(b);
+  scroll();
+}
+
+const esc = (s) => String(s).replace(/[&<>]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
+
+let lastExpr = 'smile';
+function setAvatar(expr) {
+  lastExpr = expr;
+  if (el.headAvatar) el.headAvatar.innerHTML = avatar(expr);
+}
+
+function status(text, typing = false) {
+  if (!el.status) return;
+  el.status.textContent = text;
+  el.status.classList.toggle('typing', typing);
+}
+
+/** Её сообщение — с индикатором «печатает», длительность зависит от длины текста. */
+async function her(text, expr) {
+  if (expr) setAvatar(expr);
+  const t = addRow('<div class="bubble typing-b"><i></i><i></i><i></i></div>', 'her');
+  status('печатает…', true);
+  await wait(Math.min(1500, 320 + text.length * 20));
+  t.remove();
+  status('в сети');
+  addRow(`<div class="bubble">${esc(text)}</div>`, 'her');
+  sfx.msg();
+  pushLog({ k: 'her', x: text, e: lastExpr });
+  await wait(160);
+}
+
+async function me(text) {
+  addRow(`<div class="bubble">${esc(text)}</div>`, 'me');
+  sfx.send();
+  pushLog({ k: 'me', x: text });
+  await wait(280);
+}
+
+function addTask(p, streak) {
+  const html = `<div class="task">
+      <div class="topic">${esc(p.label)}</div>
+      <div class="q">${esc(p.q)}${p.sub ? `<small>${esc(p.sub)}</small>` : ''}</div>
+      ${streak >= 2 ? `<div class="streak">🔥 серия ${streak} — верный ответ даёт бонус</div>` : ''}
+    </div>`;
+  const wrapEl = document.createElement('div');
+  wrapEl.innerHTML = html;
+  el.thread.appendChild(wrapEl.firstElementChild);
+  scroll();
+}
+
+function addSolution(p) {
+  const d = document.createElement('div');
+  d.className = 'solve';
+  d.innerHTML = `Правильно: <b>${esc(p.answer)}</b><br>${esc(p.solution)}`;
+  el.thread.appendChild(d);
+  scroll();
+}
+
+function addPhoto(ph) {
+  const d = document.createElement('div');
+  d.className = 'photo';
+  d.innerHTML = `<div class="frame">${ph.art()}</div><div class="cap">${esc(ph.cap)}</div>`;
+  d.onclick = () => hooks.openPhoto(ph);
+  el.thread.appendChild(d);
+  scroll();
+  pushLog({ k: 'photo', id: ph.id });
+}
+
+/** Восстановить переписку при возврате в игру. */
+function restoreLog() {
+  if (!S.log.length) return;
+  for (const e of S.log) {
+    if (e.k === 'her') { lastExpr = e.e || 'smile'; addRow(`<div class="bubble">${esc(e.x)}</div>`, 'her', false); }
+    else if (e.k === 'me') addRow(`<div class="bubble">${esc(e.x)}</div>`, 'me', false);
+    else if (e.k === 'sys') addSys(e.x, false);
+    else if (e.k === 'photo') { const ph = byId(e.id); if (ph) addPhoto(ph); }
+  }
+  addSys('вы вернулись');
+  el.thread.scrollTop = el.thread.scrollHeight;
+}
+
+/* ─────────────── низ экрана ─────────────── */
+
+const clearComposer = () => { el.composer.innerHTML = ''; };
+
+function btn(cls, html) {
+  const b = document.createElement('button');
+  b.className = cls;
+  b.innerHTML = html;
+  return b;
+}
+
+/** Показать варианты реплик, дождаться выбора. */
+function showReplies(opts) {
+  return new Promise((resolve) => {
+    clearComposer();
+    const box = document.createElement('div');
+    box.className = 'replies';
+    opts.forEach((o, i) => {
+      const b = btn('reply', esc(o.x));
+      b.style.animationDelay = `${i * 45}ms`;
+      b.onclick = () => { clearComposer(); resolve(o); };
+      box.appendChild(b);
+    });
+    el.composer.appendChild(box);
+  });
+}
+
+/** Показать 4 варианта ответа. Резолвится после анимации верно/неверно. */
+function showOptions(p) {
+  return new Promise((resolve) => {
+    clearComposer();
+    const box = document.createElement('div');
+    box.className = 'opts';
+    const all = [];
+    p.options.forEach((v, i) => {
+      const b = btn('opt', esc(v));
+      b.style.animationDelay = `${i * 40}ms`;
+      b.onclick = async () => {
+        const ok = v === p.answer;
+        all.forEach((x) => { x.disabled = true; });
+        b.classList.add(ok ? 'right' : 'wrong');
+        if (!ok) all.find((x) => x.textContent === p.answer)?.classList.add('right');
+        await wait(ok ? 460 : 900);
+        clearComposer();
+        resolve(ok);
+      };
+      all.push(b);
+      box.appendChild(b);
+    });
+    el.composer.appendChild(box);
+  });
+}
+
+/** Одна или несколько кнопок; резолвится индексом нажатой. */
+function showButtons(list, hint) {
+  return new Promise((resolve) => {
+    clearComposer();
+    list.forEach((b, i) => {
+      const node = btn(b.quiet ? 'cta quiet' : 'cta', esc(b.label));
+      node.style.animationDelay = `${i * 50}ms`;
+      node.onclick = () => { clearComposer(); resolve(i); };
+      el.composer.appendChild(node);
+    });
+    if (hint) {
+      const h = document.createElement('div');
+      h.className = 'hintline';
+      h.textContent = hint;
+      el.composer.appendChild(h);
+    }
+  });
+}
+
+/* ─────────────── симпатия ─────────────── */
+
+function updateAff() {
+  const i = levelInfo();
+  el.affFill.style.width = `${i.pct * 100}%`;
+  el.affLvl.textContent = i.max ? i.name : `ур. ${i.level} · ${i.name}`;
+}
+
+async function gain(n) {
+  if (!n) return;
+  const up = addAffection(n);
+  el.affWrap.classList.add('pulse');
+  setTimeout(() => el.affWrap.classList.remove('pulse'), 500);
+  updateAff();
+  if (up) await levelUp(up);
+}
+
+async function levelUp(level) {
+  const i = levelInfo();
+  sfx.level();
+  el.levelup.hidden = false;
+  el.levelup.innerHTML =
+    `<div class="big">уровень симпатии</div><div class="n">${level}</div><div class="sub">${esc(i.name)}</div>`;
+  if (navigator.vibrate) navigator.vibrate([12, 60, 22]);
+  await wait(1900);
+  el.levelup.hidden = true;
+}
+
+/* ─────────────── шаги сценария ─────────────── */
+
+const advance = () => { S.step++; save(); };
+
+async function doChoice(st) {
+  const o = await showReplies(st.opts);
+  await me(o.x);
+  await gain(o.aff || 0);
+  await her(o.reply);
+  if (o.then) await her(o.then);
+}
+
+function nextProblem(st) {
+  const lvl = levelInfo().level;
+  const topic = st.topic || pick(topicsForLevel(lvl));
+  const d = st.d || Math.max(1, Math.min(5, Math.ceil(lvl / 2)));
+  return makeProblem(topic, d);
+}
+
+async function doMath(st) {
+  if (st.intro) await her(st.intro);
+  const p = nextProblem(st);
+  addTask(p, S.streak);
+  status('ждёт ответ');
+  const ok = await showOptions(p);
+  status('в сети');
+
+  if (ok) {
+    const streak = markCorrect();
+    sfx.right(streak);
+    if (navigator.vibrate) navigator.vibrate(10);
+    const base = st.aff ?? 8;
+    const bonus = streak >= 3 ? Math.round(base * 0.6) : 0;
+    if (bonus) hooks.toast(`🔥 серия ${streak} · +${bonus} к симпатии`);
+    await gain(base + bonus);
+    await her(st.good || pick(MARATHON.good), 'laugh');
+  } else {
+    markWrong();
+    sfx.wrong();
+    addSolution(p);
+    await her(st.bad || pick(MARATHON.bad), 'think');
+    await gain(2);
+    await showButtons([{ label: 'Понял, дальше' }]);
+  }
+  return ok;
+}
+
+async function doPhoto(st) {
+  if (st.pre) await her(st.pre);
+  status('отправляет фото…', true);
+  await wait(620);
+  status('в сети');
+  const ph = byId(st.id);
+  if (!ph) return;
+  addPhoto(ph);
+  sfx.photo();
+  if (navigator.vibrate) navigator.vibrate([8, 40, 8]);
+  if (unlockPhoto(st.id)) {
+    hooks.onPhoto(ph);
+    hooks.toast(`Новое фото: «${ph.title}»`);
+  }
+  await gain(5);
+  await wait(320);
+}
+
+async function doEnd(st) {
+  const next = CHAPTERS[S.chapter + 1];
+  addSys(`Конец главы · ${st.x}`);
+  pushLog({ k: 'sys', x: `Конец главы · ${st.x}` });
+
+  const list = [{ label: next ? `Дальше: «${next.title}»` : 'Свободный режим' }];
+  if (!dailyDone()) list.push({ label: '🎯 Челлендж дня', quiet: true });
+
+  const i = await showButtons(list, next ? 'прогресс сохраняется сам' : 'сюжет пройден — Ника продолжит писать');
+  if (i === 1) { await runDaily(); return; }
+
+  S.chapter++; S.step = 0; save();
+}
+
+/* ─────────────── челлендж дня ─────────────── */
+
+async function runDaily() {
+  addSys('Челлендж дня');
+  await her(DAILY.intro, 'wink');
+
+  useRandom(seededRandom(todaySeed()));
+  const lvl = levelInfo().level;
+  const set = Array.from({ length: 5 }, (_, i) =>
+    makeProblem(pick(topicsForLevel(lvl)), Math.max(1, Math.min(5, Math.ceil(lvl / 2) + (i > 2 ? 1 : 0)))));
+  useRandom(null);
+
+  let score = 0;
+  for (let i = 0; i < set.length; i++) {
+    const p = set[i];
+    addSys(`${i + 1} из 5`);
+    addTask(p, 0);
+    if (await showOptions(p)) { score++; sfx.right(score); } else { sfx.wrong(); addSolution(p); }
+  }
+
+  finishDaily(score);
+  await her(DAILY.win(score), score >= 4 ? 'laugh' : 'think');
+  await gain(score * 6);
+  hooks.toast(`Челлендж дня: ${score}/5`);
+}
+
+/* ─────────────── бесконечный режим ─────────────── */
+
+async function marathonRound() {
+  if (!S.marathonStarted) {
+    S.marathonStarted = true; save();
+    addSys('Свободный режим');
+    await her('сюжет кончился, а я нет', 'wink');
+    await her('буду кидать примеры. посмотрим, как долго продержишься');
+  }
+
+  const before = S.streak;
+  const ok = await doMath({ intro: pick(MARATHON.intro), aff: 6 });
+  if (ok && S.streak > S.marathonBest) { S.marathonBest = S.streak; save(); }
+  if (!ok && before >= 5) hooks.toast(`серия оборвалась на ${before}`);
+
+  const list = [{ label: 'Ещё пример' }];
+  if (!dailyDone()) list.push({ label: '🎯 Челлендж дня', quiet: true });
+  const i = await showButtons(list, `лучшая серия: ${S.marathonBest}`);
+  if (i === 1) await runDaily();
+}
+
+/* ─────────────── главный цикл ─────────────── */
+
+async function tick() {
+  const ch = CHAPTERS[S.chapter];
+  if (!ch) return marathonRound();
+
+  const st = ch.steps[S.step];
+  if (!st) { S.chapter++; S.step = 0; save(); return; }
+
+  switch (st.t) {
+    case 'sys':    addSys(st.x); pushLog({ k: 'sys', x: st.x }); advance(); break;
+    case 'msg':    await her(st.x, st.e); advance(); break;
+    case 'me':     await me(st.x); advance(); break;
+    case 'choice': await doChoice(st); advance(); break;
+    case 'math':   await doMath(st); advance(); break;
+    case 'photo':  await doPhoto(st); advance(); break;
+    case 'end':    await doEnd(st); break;
+    default:       advance();
+  }
+}
+
+async function runChat() {
+  if (running) return;
+  running = true;
+  status('в сети');
+  // eslint-disable-next-line no-constant-condition
+  while (true) {
+    try { await tick(); }
+    catch (e) { console.error(e); await wait(600); }
+  }
+}
+
+return { initChat, runChat };
+})();
+
+__m.main = (() => {
+/** Точка входа: экраны, вкладки, галерея, профиль и запуск переписки. */
+
+const { S, load, save, reset, levelInfo, touchDay, dailyDone } = __m.state;
+const { PHOTOS, renderGallery } = __m.gallery;
+const { initChat, runChat } = __m.chat;
+const { sfx, unlockAudio, setMuted } = __m.audio;
+const $ = (id) => document.getElementById(id);
+
+const dom = {
+  thread: $('thread'), composer: $('composer'), status: $('head-status'),
+  headAvatar: $('head-avatar'), affFill: $('aff-fill'), affLvl: $('aff-lvl'),
+  affWrap: $('affection'), levelup: $('levelup'),
+};
+
+load();
+
+/* ── тосты ── */
+let toastTimer = 0;
+function toast(text) {
+  const t = $('toast');
+  t.textContent = text;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2600);
+}
+
+/* ── просмотр фото ── */
+function openPhoto(ph) {
+  $('lb-card').innerHTML = `<div class="frame">${ph.art()}</div>`;
+  $('lb-cap').textContent = `«${ph.title}» — ${ph.cap}`;
+  $('lightbox').hidden = false;
+  sfx.tap();
+}
+$('lb-close').onclick = () => { $('lightbox').hidden = true; };
+$('lightbox').onclick = (e) => { if (e.target.id === 'lightbox') $('lightbox').hidden = true; };
+
+/* ── вкладки ── */
+let view = 'chat';
+function show(name) {
+  view = name;
+  document.querySelectorAll('.view').forEach((v) => v.classList.toggle('active', v.id === `view-${name}`));
+  document.querySelectorAll('.tab').forEach((t) => t.classList.toggle('active', t.dataset.view === name));
+  if (name === 'gallery') { $('dot-gallery').hidden = true; drawGallery(); }
+  if (name === 'profile') drawProfile();
+  sfx.tap();
+}
+document.querySelectorAll('.tab').forEach((t) => { t.onclick = () => show(t.dataset.view); });
+
+const drawGallery = () => renderGallery($('grid'), $('gallery-count'), openPhoto);
+
+/* ── профиль ── */
+function drawProfile() {
+  const i = levelInfo();
+  const opened = PHOTOS.filter((p) => S.photos.includes(p.id)).length;
+  const acc = S.solved + S.wrong ? Math.round((S.solved / (S.solved + S.wrong)) * 100) : 0;
+
+  const achievements = [
+    ['Первый пример', S.solved >= 1],
+    ['10 верных', S.solved >= 10],
+    ['50 верных', S.solved >= 50],
+    ['Серия 5', S.bestStreak >= 5],
+    ['Серия 10', S.bestStreak >= 10],
+    ['Полколлекции', opened >= 6],
+    ['Все фото', opened >= PHOTOS.length],
+    ['Сюжет пройден', S.chapter >= 6],
+    ['3 дня подряд', S.days >= 3],
+    ['7 дней подряд', S.days >= 7],
+    ['Челлендж 5/5', S.dailyBest >= 5],
+  ];
+
+  $('profile').innerHTML = `
+    <div class="pcard">
+      <h3>Отношения</h3>
+      <div class="prow"><span>Уровень</span><b>${i.level} · ${i.name}</b></div>
+      <div class="prow"><span>Симпатия</span><b>${S.aff}${i.max ? '' : ` / ${S.aff - i.into + i.need}`}</b></div>
+      <div class="prow"><span>Глава</span><b>${S.chapter >= 6 ? 'пройдено ✓' : `${S.chapter + 1} из 6`}</b></div>
+      <div class="prow"><span>Фото</span><b>${opened} / ${PHOTOS.length}</b></div>
+    </div>
+
+    <div class="pcard">
+      <h3>Серия дней</h3>
+      <div class="streakbig">
+        <div class="fire">${S.days >= 3 ? '🔥' : '🌱'}</div>
+        <div><b>${S.days}</b><span>${S.days === 1 ? 'день' : 'дней'} подряд · челлендж дня ${dailyDone() ? 'пройден' : 'ждёт'}</span></div>
+      </div>
+    </div>
+
+    <div class="pcard">
+      <h3>Математика</h3>
+      <div class="prow"><span>Решено верно</span><b>${S.solved}</b></div>
+      <div class="prow"><span>Точность</span><b>${acc}%</b></div>
+      <div class="prow"><span>Лучшая серия</span><b>${S.bestStreak}</b></div>
+      <div class="prow"><span>Свободный режим</span><b>${S.marathonBest}</b></div>
+      <div class="prow"><span>Челлендж дня</span><b>${S.dailyBest} / 5</b></div>
+    </div>
+
+    <div class="pcard">
+      <h3>Достижения</h3>
+      <div class="achv">${achievements.map(([n, on]) => `<span class="badge${on ? ' on' : ''}">${on ? '★' : '☆'} ${n}</span>`).join('')}</div>
+    </div>
+
+    <button class="cta quiet" id="btn-reset">Начать историю заново</button>`;
+
+  $('btn-reset').onclick = () => {
+    if (!confirm('Сбросить весь прогресс: главы, симпатию и все фото?')) return;
+    reset();
+    location.reload();
+  };
+}
+
+/* ── звук ── */
+function paintMute() { $('btn-mute').textContent = S.muted ? '🔇' : '♪'; }
+$('btn-mute').onclick = () => { setMuted(!S.muted); paintMute(); if (!S.muted) sfx.tap(); };
+paintMute();
+window.addEventListener('pointerdown', function once() {
+  unlockAudio();
+  window.removeEventListener('pointerdown', once);
+}, { once: true });
+
+/* ── запуск ── */
+initChat(dom, {
+  toast,
+  openPhoto,
+  onPhoto: () => { if (view !== 'gallery') $('dot-gallery').hidden = false; },
+});
+
+const day = touchDay();
+if (day.isNewDay && day.streak > 1) toast(`🔥 ${day.streak} ${day.streak < 5 ? 'дня' : 'дней'} подряд — Ника заметила`);
+else if (day.broken && day.streak === 1 && S.solved > 0) toast('серия дней сбросилась — начинаем заново');
+
+runChat();
+
+
+return {  };
+})();
+</script>
