@@ -4,6 +4,7 @@ const ASSETS = [
   './', './index.html', './styles.css', './manifest.webmanifest', './icon.svg',
   './src/main.js', './src/chat.js', './src/state.js', './src/math.js',
   './src/story.js', './src/gallery.js', './src/art.js', './src/audio.js',
+  './src/generated.js',
 ];
 
 self.addEventListener('install', (e) => {

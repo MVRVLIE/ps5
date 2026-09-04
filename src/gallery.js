@@ -2,6 +2,7 @@
 
 import * as art from './art.js';
 import { S, hasPhoto, markSeen } from './state.js';
+import { REAL_PHOTOS } from './generated.js';
 
 export const PHOTOS = [
   { id: 'desk',    title: 'Рабочее место',  cap: 'вот тут я и страдаю',            hint: 'глава 1',  art: art.sceneDesk },
@@ -23,6 +24,15 @@ export const byId = (id) => PHOTOS.find((p) => p.id === id);
 const LOCK = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round">
   <rect x="4.5" y="10.5" width="15" height="10.5" rx="2.5"/><path d="M8 10.5V7.8a4 4 0 0 1 8 0v2.7"/></svg>`;
 
+/**
+ * Если tools/gen-photos.mjs нарисовал карточку — показываем картинку поверх
+ * вектора. Список приходит из сборки, поэтому ни одного запроса вхолостую.
+ */
+const real = new Set(REAL_PHOTOS);
+/** Рамка карточки: сгенерированная картинка поверх вектора либо просто вектор. */
+export const frameHtml = (p) =>
+  `<div class="frame">${p.art()}${real.has(p.id) ? `<img class="real" src="assets/photos/${p.id}.png" alt="">` : ''}</div>`;
+
 /** Отрисовать сетку коллекции. */
 export function renderGallery(gridEl, countEl, onOpen) {
   const opened = PHOTOS.filter((p) => hasPhoto(p.id)).length;
@@ -35,7 +45,7 @@ export function renderGallery(gridEl, countEl, onOpen) {
 
     if (hasPhoto(p.id)) {
       el.className = 'card' + (S.fresh.includes(p.id) ? ' fresh' : '');
-      el.innerHTML = `<div class="frame">${p.art()}</div><div class="cap">${p.title}</div>`;
+      el.innerHTML = `${frameHtml(p)}<div class="cap">${p.title}</div>`;
       el.onclick = () => { markSeen(p.id); onOpen(p); };
     } else {
       el.className = 'card locked';

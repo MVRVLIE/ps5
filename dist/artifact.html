@@ -162,6 +162,10 @@ body::before{
 }
 .solve b{color:#fff}
 
+/* Сгенерированная картинка перекрывает векторную заглушку в той же рамке */
+.frame{position:relative}
+.frame img.real{position:absolute;inset:0;display:block;width:100%;height:100%;object-fit:cover}
+
 /* ── Фото-карточка (полароид) ── */
 .photo{
   align-self:flex-start;max-width:58%;margin-left:34px;
@@ -1445,11 +1449,23 @@ const sfx = {
 return { unlockAudio, setMuted, sfx };
 })();
 
+__m.generated = (() => {
+/**
+ * Список карточек, для которых рядом лежат картинки из tools/gen-photos.mjs.
+ * Файл переписывается генератором — руками править нет смысла.
+ * Пустой список = игра рисует все карточки вектором, как и задумано по умолчанию.
+ */
+const REAL_PHOTOS = [];
+
+return { REAL_PHOTOS };
+})();
+
 __m.gallery = (() => {
 /** Каталог «фото» Ники: то, ради чего игрок возвращается и добивает главы. */
 
 const art = __m.art;
 const { S, hasPhoto, markSeen } = __m.state;
+const { REAL_PHOTOS } = __m.generated;
 const PHOTOS = [
   { id: 'desk',    title: 'Рабочее место',  cap: 'вот тут я и страдаю',            hint: 'глава 1',  art: art.sceneDesk },
   { id: 'glasses', title: 'В очках',        cap: 'только не смейся',               hint: 'глава 1',  art: () => art.portrait({ expr: 'wink', accessory: 'glasses', bg: ['#4a2f75', '#8f5bb5'], outfit: '#7aa7ff' }) },
@@ -1470,6 +1486,15 @@ const byId = (id) => PHOTOS.find((p) => p.id === id);
 const LOCK = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round">
   <rect x="4.5" y="10.5" width="15" height="10.5" rx="2.5"/><path d="M8 10.5V7.8a4 4 0 0 1 8 0v2.7"/></svg>`;
 
+/**
+ * Если tools/gen-photos.mjs нарисовал карточку — показываем картинку поверх
+ * вектора. Список приходит из сборки, поэтому ни одного запроса вхолостую.
+ */
+const real = new Set(REAL_PHOTOS);
+/** Рамка карточки: сгенерированная картинка поверх вектора либо просто вектор. */
+const frameHtml = (p) =>
+  `<div class="frame">${p.art()}${real.has(p.id) ? `<img class="real" src="assets/photos/${p.id}.png" alt="">` : ''}</div>`;
+
 /** Отрисовать сетку коллекции. */
 function renderGallery(gridEl, countEl, onOpen) {
   const opened = PHOTOS.filter((p) => hasPhoto(p.id)).length;
@@ -1482,7 +1507,7 @@ function renderGallery(gridEl, countEl, onOpen) {
 
     if (hasPhoto(p.id)) {
       el.className = 'card' + (S.fresh.includes(p.id) ? ' fresh' : '');
-      el.innerHTML = `<div class="frame">${p.art()}</div><div class="cap">${p.title}</div>`;
+      el.innerHTML = `${frameHtml(p)}<div class="cap">${p.title}</div>`;
       el.onclick = () => { markSeen(p.id); onOpen(p); };
     } else {
       el.className = 'card locked';
@@ -1492,7 +1517,7 @@ function renderGallery(gridEl, countEl, onOpen) {
   });
 }
 
-return { PHOTOS, byId, renderGallery };
+return { PHOTOS, byId, frameHtml, renderGallery };
 })();
 
 __m.chat = (() => {
@@ -1505,7 +1530,7 @@ __m.chat = (() => {
 const { S, save, pushLog, addAffection, levelInfo, markCorrect, markWrong, unlockPhoto, dailyDone, finishDaily, todaySeed } = __m.state;
 const { makeProblem, topicsForLevel, useRandom, seededRandom } = __m.math;
 const { CHAPTERS, MARATHON, DAILY } = __m.story;
-const { byId } = __m.gallery;
+const { byId, frameHtml } = __m.gallery;
 const { avatar } = __m.art;
 const { sfx } = __m.audio;
 let el = {};
@@ -1613,7 +1638,7 @@ function addSolution(p) {
 function addPhoto(ph) {
   const d = document.createElement('div');
   d.className = 'photo';
-  d.innerHTML = `<div class="frame">${ph.art()}</div><div class="cap">${esc(ph.cap)}</div>`;
+  d.innerHTML = `${frameHtml(ph)}<div class="cap">${esc(ph.cap)}</div>`;
   d.onclick = () => hooks.openPhoto(ph);
   el.thread.appendChild(d);
   scroll();
@@ -1898,7 +1923,7 @@ __m.main = (() => {
 /** Точка входа: экраны, вкладки, галерея, профиль и запуск переписки. */
 
 const { S, load, save, reset, levelInfo, touchDay, dailyDone } = __m.state;
-const { PHOTOS, renderGallery } = __m.gallery;
+const { PHOTOS, renderGallery, frameHtml } = __m.gallery;
 const { initChat, runChat } = __m.chat;
 const { sfx, unlockAudio, setMuted } = __m.audio;
 const $ = (id) => document.getElementById(id);
@@ -1923,7 +1948,7 @@ function toast(text) {
 
 /* ── просмотр фото ── */
 function openPhoto(ph) {
-  $('lb-card').innerHTML = `<div class="frame">${ph.art()}</div>`;
+  $('lb-card').innerHTML = frameHtml(ph);
   $('lb-cap').textContent = `«${ph.title}» — ${ph.cap}`;
   $('lightbox').hidden = false;
   sfx.tap();

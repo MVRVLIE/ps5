@@ -14,7 +14,7 @@ const ROOT = path.dirname(new URL(import.meta.url).pathname);
 const read = (p) => fs.readFileSync(path.join(ROOT, p), 'utf8');
 
 /** Порядок важен: модуль должен быть собран раньше тех, кто его импортирует. */
-const ORDER = ['state', 'math', 'art', 'story', 'audio', 'gallery', 'chat', 'main'];
+const ORDER = ['state', 'math', 'art', 'story', 'audio', 'generated', 'gallery', 'chat', 'main'];
 
 const EXPORTED = /^export\s+(?:async\s+)?(?:function|const|let|var|class)\s+([A-Za-z_$][\w$]*)/gm;
 const NAMESPACE_IMPORT = /^import\s+\*\s+as\s+([A-Za-z_$][\w$]*)\s+from\s+'\.\/(\w+)\.js';?\s*$/gm;

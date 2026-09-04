@@ -1,7 +1,7 @@
 /** Точка входа: экраны, вкладки, галерея, профиль и запуск переписки. */
 
 import { S, load, save, reset, levelInfo, touchDay, dailyDone } from './state.js';
-import { PHOTOS, renderGallery } from './gallery.js';
+import { PHOTOS, renderGallery, frameHtml } from './gallery.js';
 import { initChat, runChat } from './chat.js';
 import { sfx, unlockAudio, setMuted } from './audio.js';
 
@@ -27,7 +27,7 @@ function toast(text) {
 
 /* ── просмотр фото ── */
 function openPhoto(ph) {
-  $('lb-card').innerHTML = `<div class="frame">${ph.art()}</div>`;
+  $('lb-card').innerHTML = frameHtml(ph);
   $('lb-cap').textContent = `«${ph.title}» — ${ph.cap}`;
   $('lightbox').hidden = false;
   sfx.tap();

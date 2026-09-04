@@ -10,7 +10,7 @@ import {
 } from './state.js';
 import { makeProblem, topicsForLevel, useRandom, seededRandom } from './math.js';
 import { CHAPTERS, MARATHON, DAILY } from './story.js';
-import { byId } from './gallery.js';
+import { byId, frameHtml } from './gallery.js';
 import { avatar } from './art.js';
 import { sfx } from './audio.js';
 
@@ -119,7 +119,7 @@ function addSolution(p) {
 function addPhoto(ph) {
   const d = document.createElement('div');
   d.className = 'photo';
-  d.innerHTML = `<div class="frame">${ph.art()}</div><div class="cap">${esc(ph.cap)}</div>`;
+  d.innerHTML = `${frameHtml(ph)}<div class="cap">${esc(ph.cap)}</div>`;
   d.onclick = () => hooks.openPhoto(ph);
   el.thread.appendChild(d);
   scroll();
